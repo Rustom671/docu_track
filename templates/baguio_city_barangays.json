@@ -1,0 +1,1035 @@
+ [
+        {
+            "ID": "36136",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Abanao - Zandueta - Kayong - Chugum - Otek (AZKCO)"
+        },
+        {
+            "ID": "36143",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Alfonso Tabora"
+        },
+        {
+            "ID": "36134",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Ambiong"
+        },
+        {
+            "ID": "36133",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Andres Bonifacio - Caguioa - Rimando (ABCR)"
+        },
+        {
+            "ID": "36128",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Andres Bonifacio (Lower Bokawkan)"
+        },
+        {
+            "ID": "36039",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Asin Road"
+        },
+        {
+            "ID": "36040",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Atok Trail"
+        },
+        {
+            "ID": "36098",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Aurora Hill - North Central"
+        },
+        {
+            "ID": "36090",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Aurora Hill - Proper (Malvar - Sgt. Floresca)"
+        },
+        {
+            "ID": "36135",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Aurora Hill - South Central"
+        },
+        {
+            "ID": "36137",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Bagong Limpunan (Market Area)"
+        },
+        {
+            "ID": "36138",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Baguio General Hospital Compound"
+        },
+        {
+            "ID": "36041",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Bakakeng - Central"
+        },
+        {
+            "ID": "36042",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Bakakeng - Norte/Sur"
+        },
+        {
+            "ID": "36044",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Balsigan"
+        },
+        {
+            "ID": "36046",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Bayan Park - East"
+        },
+        {
+            "ID": "36139",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Bayan Park - Village"
+        },
+        {
+            "ID": "36045",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Bayan Park - West"
+        },
+        {
+            "ID": "36048",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Brookside"
+        },
+        {
+            "ID": "36047",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Brookspoint"
+        },
+        {
+            "ID": "36049",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Cabinet Hill - Teacher's Camp"
+        },
+        {
+            "ID": "36140",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Camdas Subdivision"
+        },
+        {
+            "ID": "36051",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Camp 7"
+        },
+        {
+            "ID": "36052",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Camp 8"
+        },
+        {
+            "ID": "36050",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Camp Allen"
+        },
+        {
+            "ID": "36053",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Campo Filipino"
+        },
+        {
+            "ID": "36054",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "City Camp - Central"
+        },
+        {
+            "ID": "36055",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "City Camp - Proper"
+        },
+        {
+            "ID": "36056",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Country Club Village"
+        },
+        {
+            "ID": "36057",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Cresencia Village"
+        },
+        {
+            "ID": "36082",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Dagsian - Lower"
+        },
+        {
+            "ID": "36058",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Dagsian - Upper"
+        },
+        {
+            "ID": "36060",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Dizon Subdivision"
+        },
+        {
+            "ID": "36142",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Dominican Hill-Mirador"
+        },
+        {
+            "ID": "36144",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Dontogan"
+        },
+        {
+            "ID": "36059",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Dps Area"
+        },
+        {
+            "ID": "36062",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Engineers Hill"
+        },
+        {
+            "ID": "36063",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Fairview Village"
+        },
+        {
+            "ID": "36145",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Ferdinand (Happy Homes-Campo Sioco)"
+        },
+        {
+            "ID": "36064",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Fort Del Pilar"
+        },
+        {
+            "ID": "36151",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Gabriela Silang"
+        },
+        {
+            "ID": "36085",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "General Emilio F. Aguinaldo (Quirino-Magsaysay, Lower)"
+        },
+        {
+            "ID": "36066",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "General Luna, Lower"
+        },
+        {
+            "ID": "36065",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "General Luna, Upper"
+        },
+        {
+            "ID": "36067",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Gibraltar"
+        },
+        {
+            "ID": "36068",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Greenwater Village"
+        },
+        {
+            "ID": "36069",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Guisad Central"
+        },
+        {
+            "ID": "36070",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Guisad Sorong"
+        },
+        {
+            "ID": "36043",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Happy Hollow"
+        },
+        {
+            "ID": "36146",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Happy Homes (Happy Homes-Lucban)"
+        },
+        {
+            "ID": "36147",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Harrison-Claudio Carantes"
+        },
+        {
+            "ID": "36071",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Hillside"
+        },
+        {
+            "ID": "36072",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Holy Ghost Extension"
+        },
+        {
+            "ID": "36073",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Holy Ghost Proper"
+        },
+        {
+            "ID": "36148",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Honeymoon (Honeymoon-Holy Ghost)"
+        },
+        {
+            "ID": "36130",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Imelda R. Marcos (La Salle)"
+        },
+        {
+            "ID": "36074",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Imelda Village"
+        },
+        {
+            "ID": "36075",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Irisan"
+        },
+        {
+            "ID": "36149",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Kabayanihan"
+        },
+        {
+            "ID": "36078",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Kagitingan"
+        },
+        {
+            "ID": "36076",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Kayang Extension"
+        },
+        {
+            "ID": "36150",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Kayang-Hilltop"
+        },
+        {
+            "ID": "36077",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Kias"
+        },
+        {
+            "ID": "36129",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Legarda-Burnham-Kisad"
+        },
+        {
+            "ID": "36038",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Loakan - Apugan"
+        },
+        {
+            "ID": "36152",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Loakan - Liwanag"
+        },
+        {
+            "ID": "36079",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Loakan - Proper"
+        },
+        {
+            "ID": "36080",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Lopez Jaena"
+        },
+        {
+            "ID": "36081",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Lourdes Subdivision Extension"
+        },
+        {
+            "ID": "36083",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Lourdes Subdivision, Lower"
+        },
+        {
+            "ID": "36131",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Lourdes Subdivision, Proper"
+        },
+        {
+            "ID": "36086",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Lualhati"
+        },
+        {
+            "ID": "36087",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Lucnab"
+        },
+        {
+            "ID": "36088",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Magsaysay - Lower"
+        },
+        {
+            "ID": "36089",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Magsaysay - Private Road"
+        },
+        {
+            "ID": "36164",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Magsaysay - Upper"
+        },
+        {
+            "ID": "36153",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Malcolm Square-Perfecto (Jose Abad Santos)"
+        },
+        {
+            "ID": "36154",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Manuel A. Roxas"
+        },
+        {
+            "ID": "36091",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Marcoville (Bal - Marcoville)"
+        },
+        {
+            "ID": "36165",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Market Subdivision, Upper"
+        },
+        {
+            "ID": "36093",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Military Cut-Off"
+        },
+        {
+            "ID": "36094",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Mines View Park"
+        },
+        {
+            "ID": "36095",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Modern Site, East"
+        },
+        {
+            "ID": "36096",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Modern Site, West"
+        },
+        {
+            "ID": "36107",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Mrr-Queen Of Peace"
+        },
+        {
+            "ID": "36097",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "New Lucban"
+        },
+        {
+            "ID": "36100",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Outlook Drive"
+        },
+        {
+            "ID": "36101",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Pacdal"
+        },
+        {
+            "ID": "36155",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Padre Burgos"
+        },
+        {
+            "ID": "36166",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Padre Zamora"
+        },
+        {
+            "ID": "36141",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Palma-Urbano (Cari?O-Palma)"
+        },
+        {
+            "ID": "36158",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Phil-Am"
+        },
+        {
+            "ID": "36102",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Pinget"
+        },
+        {
+            "ID": "36103",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Pinsao Pilot Project"
+        },
+        {
+            "ID": "36104",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Pinsao Proper"
+        },
+        {
+            "ID": "36105",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Poliwes"
+        },
+        {
+            "ID": "36106",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Pucsusan"
+        },
+        {
+            "ID": "36160",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Quezon Hill - Middle (Subdivision)"
+        },
+        {
+            "ID": "36159",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Quezon Hill Proper"
+        },
+        {
+            "ID": "36156",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Quezon Hill, Upper"
+        },
+        {
+            "ID": "36132",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Quirino - Magsaysay - Upper (Upper QM)"
+        },
+        {
+            "ID": "36061",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Quirino Hill, East"
+        },
+        {
+            "ID": "36084",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Quirino Hill, Lower"
+        },
+        {
+            "ID": "36092",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Quirino Hill, Middle"
+        },
+        {
+            "ID": "36127",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Quirino Hill, West"
+        },
+        {
+            "ID": "36161",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Rizal Monument Area"
+        },
+        {
+            "ID": "36108",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Rock Quarry, Lower"
+        },
+        {
+            "ID": "36157",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Rock Quarry, Middle"
+        },
+        {
+            "ID": "36125",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Rock Quarry, Upper"
+        },
+        {
+            "ID": "36122",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Saint Joseph Village"
+        },
+        {
+            "ID": "36109",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Salud Mitra"
+        },
+        {
+            "ID": "36110",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "San Antonio Village"
+        },
+        {
+            "ID": "36111",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "San Luis Village"
+        },
+        {
+            "ID": "36112",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "San Roque Village"
+        },
+        {
+            "ID": "36113",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "San Vicente"
+        },
+        {
+            "ID": "36099",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Sanitary Camp, North"
+        },
+        {
+            "ID": "36121",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Sanitary Camp, South"
+        },
+        {
+            "ID": "36114",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Santa Escolastica"
+        },
+        {
+            "ID": "36115",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Santo Rosario"
+        },
+        {
+            "ID": "36117",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Santo Tomas Proper"
+        },
+        {
+            "ID": "36116",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Santo Tomas School Area"
+        },
+        {
+            "ID": "36118",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Scout Barrio"
+        },
+        {
+            "ID": "36119",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Session Road Area"
+        },
+        {
+            "ID": "36120",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Slaughter House Area (Santo Ni?O Slaughter)"
+        },
+        {
+            "ID": "36162",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Slu-Svp Housing Village"
+        },
+        {
+            "ID": "36163",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "South Drive"
+        },
+        {
+            "ID": "36123",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Teodora Alonzo"
+        },
+        {
+            "ID": "36124",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Trancoville"
+        },
+        {
+            "ID": "36126",
+            "LOCALITY": "1342",
+            "PROVINCE": "68",
+            "REGION": "14",
+            "COUNTRY": "178",
+            "BARANGAY": "Victoria Village"
+        }
+]
+

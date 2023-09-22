@@ -1,0 +1,65 @@
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+{% include "header_test.html" %}
+
+     <div class="wrapper">
+        <div class="logo">
+            <img src="static/img/cbao logo copy.png" alt="">
+        </div>
+        <div class="text-center mt-4 name">
+            Document Tracking and Monitoring System
+        </div>
+        <form class="p-3 mt-3" method="POST">
+
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+            {% for field in form %}
+                {% if field.name == 'username' %}
+                <div class="form-field d-flex align-items-center">
+                    <span class="far fa-user"></span>
+                    <input type="text" placeholder="Username" name="{{ field.name }}" required="True">
+                </div>
+                {% elif field.name == 'password' %}
+                <div class="form-field d-flex align-items-center">
+                    <span class="fas fa-key"></span>
+                    <input type="password" name="{{ field.name }}" placeholder="Password" required="True">
+                </div>
+                {% endif %}
+            {% endfor %}
+
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                    <div class="text-center">
+                        <p style="color: red">{{ message }}</p>
+                    </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+                <button class="btn mt-3">Login</button>
+
+        </form>
+
+            <div class="text-center fs-6">
+                <a href="#">Forget password?</a> or <a href="{{ url_for('register') }}">Sign up</a>
+            </div>
+    </div>
+
+<!--      <div class="col-lg-4 col-md-6 col-sm-8 mx-auto content">-->
+<!--         {% with messages = get_flashed_messages() %}-->
+<!--          {% if messages %}-->
+<!--            {% for message in messages %}-->
+<!--            <p>{{ message }}</p>-->
+<!--            {% endfor %}-->
+<!--          {% endif %}-->
+<!--        {% endwith %}-->
+
+<!--        {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}-->
+
+<!--      </div>-->
+
+
+
+{% include "footer.html" %}
+{% endblock %}

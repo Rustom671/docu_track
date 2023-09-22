@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>DTMS</title>
+  <link rel="icon" type="image/x-icon" href="/static/img/cbao logo copy.png">
+
+    <!--Bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <!--Custom CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
+    <!--Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <!--Font-awesome -->
+    <script src="https://kit.fontawesome.com/b818170678.js" crossorigin="anonymous"></script>
+    <!--Sweet Alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+
+
+{% if not current_user.is_authenticated: %}
+<body class="hero-login">
+    <div style="padding-top: 90px">
+        <nav class="navbar navbar-expand-lg navbar-custom fixed-top" style>
+          <div class="container-fluid">
+            <a class="navbar-brand" href="https://www.gov.ph/"><strong>GOVPH</strong></a>
+            <a href="#" class="d-flex align-items-center col-md-6 col-lg-4 mb-2 mb-md-0 text-dark text-decoration-none">
+              <img src="static/img/baguio logo.png" width="90px" height="90px" style="padding-bottom: 5px; padding-right: 5px;" />
+              <div style="display: flex; flex-direction: column;">
+                <span class="city-government">Republic of the Philippines</span>
+                <hr style="color: #ffffff; margin-top: 5px; margin-bottom: 5px">
+                <span class="city-name"><strong>City Government of Baguio</strong></span>
+              </div>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+              style="border-color: #198754">
+                <i class="fa-solid fa-bars" style="color: #ffffff"></i>
+            </button>
+
+            <div class="collapse navbar-collapse collapsed-navbar" id="navbarSupportedContent">
+              <div class="col-6 navbar-nav mx-1">
+                <li style="padding-bottom: 5px"><a href="{{ url_for('get_all_posts') }}" class="nav-menu p-3 text">Home</a></li>
+                <li style="padding-bottom: 5px"><a href="about-us" class="nav-menu p-3 text">About</a></li>
+                <li style="padding-bottom: 5px"><a href="services" class="nav-menu p-3 text">Services</a></li>
+                <li style="padding-bottom: 10px"><a href="contact-us" class="nav-menu p-3 text">Contact Us</a></li>
+              </div>
+
+              <div class="navbar-nav ms-auto">
+                <li style="padding-bottom: 10px"><a href="{{ url_for('login') }}" class="nav-menu p-3 text">Login</a></li>
+              </div>
+            </div>
+          </div>
+        </nav>
+    </div>
+{% else %}
+<body style="padding-top: 56px">
+    <nav class="navbar navbar-custom fixed-top">
+        <div class="d-flex col-auto px-lg-3 px-md-2 px-sm-3 px-xs-3">
+            <a class="navbar-brand" href="https://www.gov.ph/"><strong>CBAO-DTMS</strong></a>
+        </div>
+        <div class="d-flex justify-content-end">
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle d-none d-lg-inline">
+                    <span class="d-none d-lg-inline">{{ current_user.user_fname }}</span>
+                    <i class="fa fa-bars d-lg-none"></i> <!-- Hamburger icon for small devices -->
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow dropdown-menu-end" aria-labelledby="dropdownUser1">
+                    <li><a class="dropdown-item" href="#">New project...</a></li>
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li style="padding-bottom: 10px"><a href="{{ url_for('logout') }}" class="nav-menu p-3 text">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+{% endif %}

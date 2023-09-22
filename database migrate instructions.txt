@@ -1,0 +1,50 @@
+Copy code
+pip install Flask-Migrate
+
+Initialize Flask-Migrate:
+In your Flask application, you need to initialize Flask-Migrate. Open your main app file (e.g., app.py or run.py) and add the following lines:
+
+python
+Copy code
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'your_database_uri_here'
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+Create Database Models:
+Define your database models using SQLAlchemy. These models will represent your database tables. For example:
+
+python
+Copy code
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+Generate Initial Migration:
+To create the initial migration, open a terminal and run the following command:
+
+csharp
+Copy code
+flask db init
+Generate Migrations:
+After defining your models, you need to generate migrations for your database changes. Run the following command to autogenerate a migration script:
+
+arduino
+Copy code
+flask db migrate -m "Initial migration"
+Apply Migrations:
+To apply the generated migration to your database, run the following command:
+
+Copy code
+flask db upgrade
+Modify Models and Generate More Migrations:
+Whenever you make changes to your models (add new fields, modify existing ones, etc.), generate new migrations using the flask db migrate command, and apply them using flask db upgrade.
+
+Flask-Migrate will handle generating the necessary migration scripts based on the changes you make to your models. It also provides commands for managing migrations, including creating, applying, and rolling back migrations.
+
+Remember to replace 'your_database_uri_here' with your actual database URI.
+
+Keep in mind that Flask-Migrate is built on top of Alembic, so it provides a more Flask-friendly interface for managing migrations while leveraging the power of Alembic's migration features.

@@ -1,0 +1,96 @@
+
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+{% include "header_test.html" %}
+
+<div  class="wrapper">
+    <div class="logo">
+        <img src="static/img/cbao logo copy.png" alt="">
+    </div>
+    <div class="text-center mt-4 name">
+      Register User
+    </div>
+    <form class="p-3 mt-3" method="POST">
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+        {% for field in form %}
+
+            {% if field.name == 'fname' %}
+
+            <div class="form-field d-flex align-items-center">
+                <input type="text" placeholder="First Name" name="{{ field.name }}" required="True">
+            </div>
+                {% for error in form.fname.errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+
+            {% elif field.name == 'mname' %}
+            <div class="form-field d-flex align-items-center">
+                <input type="text" name="{{ field.name }}" placeholder="Middle Name" required="True">
+            </div>
+                {% for error in form.mname.errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+
+            {% elif field.name == 'lname' %}
+            <div class="form-field d-flex align-items-center">
+                <input type="text" name="{{ field.name }}" placeholder="Last Name" required="True">
+            </div>
+                {% for error in form.lname.errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+
+            {% elif field.name == 'username' %}
+            <div class="form-field d-flex align-items-center">
+                <span class="far fa-user"></span>
+                <input type="text" name="{{ field.name }}" placeholder="Username" required="True">
+            </div>
+                {% for error in form.username.errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+
+            {% elif field.name == 'password' %}
+            <div class="form-field d-flex align-items-center">
+                <span class="fas fa-key"></span>
+                <input type="password" name="{{ field.name }}" placeholder="Password" required="True">
+            </div>
+                {% for error in form.password.errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+            {% endif %}
+
+        {% endfor %}
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+                <div class="text-center">
+                    <p style="color: red">{{ message }}</p>
+                </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+            <button class="btn mt-3">Register</button>
+
+    </form>
+        <div class="text-center fs-6">
+            Already have an account?<a href="{{ url_for('login') }}"> Login instead.</a>
+        </div>
+<!--    <div class="container">-->
+<!--        <div class="row">-->
+
+<!--           {% with messages = get_flashed_messages() %}-->
+<!--              {% if messages %}-->
+<!--                {% for message in messages %}-->
+<!--                <p>{{ message }}</p>-->
+<!--                {% endfor %}-->
+<!--              {% endif %}-->
+<!--            {% endwith %}-->
+<!--           {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}-->
+
+<!--        </div>-->
+<!--    </div>-->
+</div>
+{% include "footer.html" %}
+{% endblock %}
