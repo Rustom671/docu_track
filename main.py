@@ -85,6 +85,7 @@ class Cases(UserMixin, db.Model):
     def get_id(self):
         return str(self.id)
 
+
 class Document(db.Model):
     __tablename__ = "documents"
     id = db.Column(db.Integer, primary_key=True)
@@ -96,6 +97,17 @@ class Document(db.Model):
 
     def __repr__(self):
         return f"Document(id={self.id}, case_id={self.case_id}, user_id={self.user_id})"
+
+
+class Schedule(db.Model):
+    __tablename__ = "schedule"
+    id = db.Column(db.Integer, primary_key=True)
+    case_id = db.Column(db.Integer, db.ForeignKey('cases.id'))
+    schedule = db.Column(db.Date)
+
+    def __repr__(self):
+        return f"Document(id={self.id}, case_id={self.case_id})"
+
 
 with app.app_context():
     db.create_all()
@@ -442,6 +454,43 @@ def case():
             return redirect(url_for('case', case_no=case_number))
     return render_template("case.html", case=case, docu=documents, form=form, csrf_token=csrf_token)
 
+@app.route('/schedule', methods=["GET", "POST"])
+def schedule():
+
+    case_number = request.args.get('case_no')
+
+    if request.method == 'POST':
+        schedule_date = request.form['schedule']  # Access the date picker value from the form data
+        schedule_date_obj = datetime.strptime(schedule_date, '%m/%d/%Y')
+        formatted_schedule_date = schedule_date_obj.strftime('%Y-%m-%d')
+
+        existing_schedule = Schedule.query.filter_by(case_id=case_number).first()
+
+        try:
+            if existing_schedule:
+                # Case with the same case number already exists, update the schedule
+                existing_schedule.schedule = formatted_schedule_date
+            else:
+                # Case with the case number doesn't exist, add a new row
+                new_schedule = Schedule(case_id=case_number, schedule=formatted_schedule_date)
+                db.session.add(new_schedule)
+
+            db.session.commit()
+            flash("Schedule successfully updated!")
+
+        except Exception as e:
+            # Handle any exceptions that may occur during the database operation
+            db.session.rollback()  # Rollback the transaction
+            flash(f"An error occurred while saving the case and document: {str(e)}")# Flash an error message
+
+        return redirect(url_for('case', case_no=case_number))
+
+
+@app.route('/scheduled', methods=["GET", "POST"])
+@login_required
+def scheduled():
+
+    return render_template("scheduled.html")
 
 
 if __name__ == "__main__":

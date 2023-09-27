@@ -1,6 +1,8 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block content %}
 {% include "header_test.html" %}
+
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-xl-2 col-lg-2 col-md-3 col-sm-3 col-2 bg-light shadow min-vh-100">
@@ -43,6 +45,11 @@
                     <div class="d-flex">
                         <p class="nav-link"><i class="bi bi-pin-map-fill"></i> Location of Subject Structure: <strong>{{case.location}},</strong></p>
                         <p class="nav-link"><strong> &nbsp;{{case.barangay}}</strong></p>
+                    </div>
+                    <div class = "d-flex justify-content-center">
+                        <a class="btn btn-labeled btn-success shadow" data-bs-toggle="modal" data-bs-target="#Sched">
+                                <i class="bi bi-calendar-event-fill"></i> <span class="ms-1 d-none d-sm-inline">Schedule Deliberation</span>
+                        </a>
                     </div>
     <!--                    <h3>Document</h3>-->
     <!--                    <div class="d-flex justify-content-between px-3">-->
@@ -165,6 +172,40 @@
                       </div>
                     </div>
 
+                    <!-- Modal to schedule-->
+                    <div class="modal fade" id="Sched" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5">Schedule</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+
+                                <!-- HTML form for uploading files-->
+                                <form method="POST" id="SchedForm" enctype="multipart/form-data" action="{{ url_for('schedule', case_no=case.case_no) }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    <div class="d-flex">
+                                        <div class="mt-2">
+                                            <label>Pick a date for deliberation:</label>
+                                        </div>
+                                        <div class="px-3">
+                                            <input id="datepicker" name="schedule" width="276" class="">
+                                        </div>
+                                    </div>
+                                    <!-- Other form fields and buttons can be added here -->
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#FlashMessage">Save changes</button>
+                                    </div>
+                                </form>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <script>
                         document.addEventListener("DOMContentLoaded", function () {
                         const showDocumentButtons = document.querySelectorAll('.show-document');
@@ -191,6 +232,9 @@
 
 <!-- Add this JavaScript code after your content -->
 <script>
+$('#datepicker').datepicker({
+    uiLibrary: 'bootstrap5'
+});
 
 window.onload = function () {
     var message = document.getElementById('messageText').textContent;

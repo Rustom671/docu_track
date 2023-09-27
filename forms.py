@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, FileField, SelectField, TextAreaField
+from wtforms import StringField, SubmitField, PasswordField, FileField, SelectField, TextAreaField, DateField
 from wtforms.validators import DataRequired, ValidationError, URL
 from flask_ckeditor import CKEditorField
 import json
@@ -68,9 +68,16 @@ class AddFile(FlaskForm):
         ('Resolution', 'Resolution'),
         ('Minutes of Meeting', 'Minutes of Meeting'),
         ('Audio File', 'Audio File'),
-        ('Position Paper', 'Position Paper')
+        ('Position Paper - Complainant', 'Position Paper - Complainant'),
+        ('Position Paper - Respondent', 'Position Paper - Respondent'),
+        ('Post Demolition Report', 'Post Demolition Report'),
+        ('Notice of Meeting', 'Notice of Meeting'),
+        ('Others', 'Others')
         # Add more options as needed
     ])
     files = FileField("File Upload", validators=[DataRequired()])
+
+class Schedule(FlaskForm):
+    schedule = DateField('Date', validators=[DataRequired()])
 
 
