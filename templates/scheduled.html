@@ -12,8 +12,51 @@
         <div class="col-xl-10 col-lg-10 col-md-9 col-sm-9 col-10">
             <div class="py-3 px-lg-3 px-md-2 px-sm-3 px-xs-3" >
                 <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3">
-                    <div class = "col mb-3">
-
+                    <div class="col">
+                        <div class="card-header navbar-brand text-center" style="color: #400c06">
+                            <h5><strong>Hi {{current_user.user_fname}}! Here is a list of cases for deliberation.</strong></h5>
+                        </div>
+                        <div class="d-md-flex">
+                            <div class="col-md-6">
+                                <div class="card-body">
+                                    {% for date in schedule_date %}
+                                        <h5 style="color: #fca650">{{ date.strftime('%B %d, %Y') }}</h5>
+                                        {% for all in all_schedule %}
+                                            {% if date == all.schedule %}
+<!--                                                <button class="btn" style="text-align: left !important;">-->
+<!--                                                    <p><strong>Case Number:{{ all.case_id }}</strong></p>-->
+<!--                                                    <p>Case Title: {{ all.case_title }}</p>-->
+<!--                                                    <p>Remarks: {{ all.remarks }}</p>-->
+<!--                                                </button>-->
+                                                <a href="{{ url_for('case', case_no=all.case_id) }}" style="display: block;">
+                                                     <div class="col-auto px-sm-2 shadow p-3 rounded mb-3" style="background: white">
+                                                        <div>
+                                                            <strong><p class="nav-link">Case Number: {{ all.case_id }}</p></strong>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div class="d-flex align-items-center flex-wrap">
+                                                                <div>
+                                                                    <i class='fas fa-folder' style='color:#eac86c; font-size: 40px;'></i>
+                                                                </div>
+                                                                <div class="text-wrap">
+                                                                    <p class="nav-link ms-2 mb-0 text-wrap">{{ get_title(all.case_id) }}</p>
+                                                                    <p class="nav-link ms-2 mb-0 text-wrap">Remarks: {{ all.remarks }}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                     </div>
+                                                </a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div style="display: flex; justify-content: center;">
+                                    <img src="static/img/deliberation.png" style="max-width: 80%; height: auto;">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

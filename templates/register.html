@@ -41,6 +41,30 @@
                     <p class="error">{{ error }}</p>
                 {% endfor %}
 
+            {% elif field.name == 'office' %}
+            <div class="form-field d-flex align-items-center">
+                <input type="text" name="{{ field.name }}" placeholder="Office" required="True">
+            </div>
+                {% for error in form.office.errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+
+            {% elif field.name == 'contact' %}
+            <div class="form-field d-flex align-items-center">
+                <input type="text" name="{{ field.name }}" placeholder="Contact Number" required="True">
+            </div>
+                {% for error in form.contact.errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+
+            {% elif field.name == 'user_type' %}
+            <div class="form-field d-flex align-items-center">
+               {{ form.user_type(class="form-select custom-dropdown", id="UserType", placeholder="User Type") }}
+            </div>
+                {% for error in form.user_type.errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+
             {% elif field.name == 'username' %}
             <div class="form-field d-flex align-items-center">
                 <span class="far fa-user"></span>
@@ -63,14 +87,14 @@
         {% endfor %}
 
         {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-                <div class="text-center">
-                    <p style="color: red">{{ message }}</p>
+           {% if messages %}
+             {% for message in messages %}
+                <div class="d-flex justify-content-center" id="triggerModalDiv">
+                    <p id="messageText" style="color: red; display: none">{{ message }}</p>
                 </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+             {% endfor %}
+           {% endif %}
+         {% endwith %}
             <button class="btn mt-3">Register</button>
 
     </form>
@@ -92,5 +116,29 @@
 <!--        </div>-->
 <!--    </div>-->
 </div>
+
+<script>
+window.onload = function () {
+    var message = document.getElementById('messageText').textContent;
+    // Check if the element with id "triggerModalDiv" exists
+    if ($('#triggerModalDiv').length) {
+        var icon = "success"; // Default icon is "success"
+        var goodjob = "Good Job!"
+        // Check if the message contains the word "error" or "failed" (you can adjust this condition as needed)
+        if (message.toLowerCase().includes("error") || message.toLowerCase().includes("extension")) {
+            icon = "error"; // Change the icon to "error" for error messages
+            goodjob = "Oops!"
+        }
+
+        // Trigger the SweetAlert with the determined icon
+        swal.fire({
+            title: goodjob,
+            text: message,
+            icon: icon, // Use the determined icon
+        });
+    }
+};
+
+</script>
 {% include "footer.html" %}
 {% endblock %}

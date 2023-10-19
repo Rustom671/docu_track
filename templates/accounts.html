@@ -1,0 +1,174 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+{% include "header_test.html" %}
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script>
+<!--Custom CSS-->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/calendar.css')}}">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-3 col-2 bg-light shadow min-vh-100">
+        {% include "sidebar.html" %}
+        </div>
+        <div class="col-xl-10 col-lg-10 col-md-9 col-sm-9 col-10">
+            <div class="py-3 px-lg-3 px-md-2 px-sm-3 px-xs-3" >
+                <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3">
+                    <div class="col">
+                        <div class="card-header navbar-brand text-center" style="color: #400c06">
+                            <h5><strong>Hi {{current_user.user_fname}}! Here is a list of accounts in CBAO-DTMS.</strong></h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3">
+                    <div class="col">
+                        <div class="d-md-flex">
+                            <div class="col">
+                                <div class="d-flex name justify-content-start mb-3">
+                                    <!--Search Bar-->
+                                    <form class="d-flex align-items-center">
+                                        <div class="input-group">
+                                            <input class="form-control me-1 shadow" type="search" placeholder="Search..." aria-label="Search" name="searchUser" id="searchInput" value="{{ search_term|default('') }}">
+                                            <button class="btn custom-outline-button shadow d-inline-flex" type="submit" id="searchButton">
+                                                <i class="fa-solid fa-magnifying-glass nav-link"></i>
+                                                <span class="ms-1 d-none d-sm-inline">Search</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                    <table id="example" class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Office</th>
+                                                <th>Role</th>
+                                                <th>Status</th>
+                                                <th class="text-center">Action</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for user in users%}
+                                            <tr>
+                                                <td>{{ user.user_fname }} {{ user.user_lname }} </td>
+                                                <td>{{ user.office }}</td>
+                                                <td>
+                                                    {% if user.type == "1" %}
+                                                        Administrator
+                                                    {% elif user.type == "2" %}
+                                                        Secretariat
+                                                    {% elif user.type == "3" %}
+                                                        Member
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if user.status == "1" %}
+                                                        Inactive
+                                                    {% else %}
+                                                        Active
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <a class="btn btn-labeled btn-primary shadow me-2" href="" >
+                                                            <i class="bi bi-pencil-square"></i>
+                                                        </a>
+
+<!--                                                </td>-->
+<!--                                                <td>-->
+                                                    {% if user.status == "1" %}
+
+                                                        <form method="POST" action="{{ url_for('accounts', user_id=user.id) }}" class="me-2">
+                                                            <button type="submit" class="btn btn-labeled btn-success shadow d-inline-block me-2">
+                                                                <i class="bi bi-check2-circle"></i>
+                                                            </button>
+                                                        </form>
+                                                    {% else %}
+                                                        <form method="POST" action="{{ url_for('accounts', user_id=user.id) }}" class="me-2">
+                                                            <button type="submit" class="btn btn-labeled btn-danger shadow d-inline-block me-2">
+                                                                <i class="bi bi-slash-circle-fill"></i>
+                                                            </button>
+                                                        </form>
+                                                    {% endif %}
+                                                    </div>
+
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                            </div>
+                        </div>
+<!--                        pagination-->
+                        <div class = "col">
+                            <div class="d-flex name justify-content-end">
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination">
+                                        {% if users_paginated.has_prev %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ url_for('accounts', page=users_paginated.prev_num) }}" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+
+                                        {% for num in pagination_range %}
+                                        <li class="page-item {% if num == users_paginated.page %}active{% endif %}">
+                                            <a class="page-link" href="{{ url_for('accounts', page=num) }}">{{ num }}</a>
+                                        </li>
+                                        {% endfor %}
+
+                                        {% if users_paginated.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ url_for('accounts', page=users_paginated.next_num) }}" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+<!--                        pagination-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% with messages = get_flashed_messages() %}
+           {% if messages %}
+             {% for message in messages %}
+                <div class="d-flex justify-content-center" id="triggerModalDiv">
+                    <p id="messageText" style="color: red; display: none">{{ message }}</p>
+                </div>
+             {% endfor %}
+           {% endif %}
+        {% endwith %}
+    </div>
+</div>
+
+<script>
+window.onload = function () {
+    var message = document.getElementById('messageText').textContent;
+    // Check if the element with id "triggerModalDiv" exists
+    if ($('#triggerModalDiv').length) {
+        var icon = "success"; // Default icon is "success"
+        var goodjob = "Good Job!"
+        // Check if the message contains the word "error" or "failed" (you can adjust this condition as needed)
+        if (message.toLowerCase().includes("error") || message.toLowerCase().includes("extension")) {
+            icon = "error"; // Change the icon to "error" for error messages
+            goodjob = "Oops!"
+        }
+
+        // Trigger the SweetAlert with the determined icon
+        swal.fire({
+            title: goodjob,
+            text: message,
+            icon: icon, // Use the determined icon
+        });
+    }
+};
+
+</script>
+
+
+{% include "javascript.html" %}
+{% endblock %}
