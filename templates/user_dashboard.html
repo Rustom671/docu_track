@@ -2,11 +2,14 @@
 {% block content %}
 {% include "header_test.html" %}
 
+<!--Custom CSS-->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/card_border.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pagination.css')}}">
 
 <div class="container-fluid">
     <div class="row flex-nowrap">
         <div class="col-xl-2 col-lg-2 col-md-3 col-sm-3 col-2 bg-light shadow min-vh-100">
-        {% include "sidebar.html" %}
+            {% include "sidebar.html" %}
         </div>
         <div class="col-xl-10 col-lg-10 col-md-9 col-sm-9 col-10">
 
@@ -19,19 +22,21 @@
                                         <h5><strong>Hi {{current_user.user_fname}}!</strong></h5>
                                     </div>
                                     <div class="d-md-flex">
-                                        <div class="col-md-6">
-                                            <div class="card-body">
-                                                <div style="display: flex; justify-content: center;" id="chart">
-                                                    <img src="static/img/deliberation.png" style="max-width: 20%; height: auto;">
-                                                </div>
-                                                <p><strong>Cases for Deliberation:</strong></p>
-                                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                            </div>
+                                        <div class="col-md-6" style="justify-content: center;">
+                                             <h5 class="text-center p-3"><strong>Cases Statistics</strong></h5>
+                                             <div id="piechart">
+
+                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="card-body">
-                                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                            <div class="p-3" id="calendar">
+
                                             </div>
+                                            <p id="pending" style="display: none">{{ pending }}</p>
+                                            <p id="archived" style="display: none">{{ archived }}</p>
+                                            <p id="dismissed" style="display: none">{{ dismissed }}</p>
+                                            <p id="for_demolition" style="display: none">{{ for_demolition }}</p>
+                                            <p id="demolished" style="display: none">{{ demolished }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -71,11 +76,11 @@
 
                 {% for case in cases_paginated.items %}
                     <a href="{{ url_for('case', case_no=case.case_no) }}" style="display: block" class="p-2 ">
-                         <div class="col-auto px-sm-2 shadow rounded mb-0 ml-1" style="background: white">
+                         <div class="col-auto px-sm-2 shadow rounded mb-0 ml-1 card radius-10 border-start border-0 border-3 border-regular" style="background: white">
                             <div>
                                 <strong><p class="nav-link pt-2">Case Number: {{ case.case_no }}</p></strong>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex justify-content-between align-items-center pb-2">
                                 <div class="col-md-8 d-flex align-items-center flex-wrap"> <!-- Adjust the column width based on your design -->
                                     <div>
                                         <i class='fas fa-folder' style='color:#eac86c; font-size: 40px;'></i>
@@ -151,11 +156,11 @@
 
 <script>
 
-  // Prevent form submission and update content
-  $('#saveBtn').click(function(event) {
-    event.preventDefault();
+// Prevent form submission and update content
+$('#saveBtn').click(function(event) {
+event.preventDefault();
 
-  });
+});
 
   // Example case data
 var caseData = {
@@ -180,6 +185,71 @@ var caseData = {
 <!--        }-->
 <!--    })-->
 <!--    .catch(error => console.error('Error fetching JSON data:', error));-->
+
+// Load google charts
+google.charts.load('current', { 'packages': ['corechart'] });
+google.charts.setOnLoadCallback(drawChart);
+
+// Get the element by its id
+var pendingElement = document.getElementById("pending");
+var archivedElement = document.getElementById("archived");
+var dismissedElement = document.getElementById("dismissed");
+var fordemolitionElement = document.getElementById("for_demolition");
+var demolishedElement = document.getElementById("demolished");
+
+// Get the text content of the element and parse it as an integer
+var pendingValue = parseInt(pendingElement.textContent);
+var archivedValue = parseInt(archivedElement.textContent);
+var dismissedValue = parseInt(dismissedElement.textContent);
+var fordemolitionValue = parseInt(fordemolitionElement.textContent);
+var demolishedValue = parseInt(demolishedElement.textContent);
+
+// Draw the chart and set the chart values
+function drawChart() {
+  var data = google.visualization.arrayToDataTable([
+    ['Category', 'Value'],
+    ['Pending (' + pendingValue + ')', pendingValue],
+    ['Archived (' + archivedValue + ')', archivedValue],
+    ['Dismissed (' + dismissedValue + ')', dismissedValue],
+    ['For Demolition (' + fordemolitionValue + ')', fordemolitionValue],
+    ['Demolished (' + demolishedValue + ')', demolishedValue]
+  ]);
+
+  // Calculate the width and height based on the container size
+  var container = document.getElementById('piechart');
+  var containerWidth = container.offsetWidth;
+  var containerHeight = containerWidth * 0.7; // You can adjust this aspect ratio as needed
+
+  // Set the options for the chart
+  var options = {
+    'width': containerWidth,
+    'height': containerHeight * 0.6,
+    'colors': ['#400c06', '#663d38', '#8c6d6a', '#b39e9b', '#d9cecd', '#ffe69c'],
+    'pieHole': 0.4,
+    'legend': {
+        'position': 'right', // Change the position to 'bottom', 'left', 'right', or 'none'
+        'alignment': 'center', // Align the legend to the center
+        'textStyle': {
+            'fontSize': 14, // Change the font size of the legend
+            'fontName': 'Arial, sans-serif' // Change the font family of the legend
+        },
+
+    'chartArea': {
+        'left': '10%', // Left margin
+        'top': '10%',  // Top margin
+        'width': '80%', // Chart width
+        'height': '80%' // Chart height
+      },
+    }
+  };
+
+  // Display the chart inside the <div> element with id="piechart"
+  var chart = new google.visualization.PieChart(container);
+  chart.draw(data, options);
+}
+
+// Resize the chart when the window size changes
+window.addEventListener('resize', drawChart);
 
 </script>
 

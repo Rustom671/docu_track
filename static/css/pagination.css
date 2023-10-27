@@ -1,0 +1,13 @@
+/* Change the color of the active page */
+  .pagination .page-item.active .page-link {
+    background-color: #400c06;
+    border-color: #400c06;
+    color: white; /* Change text color for better visibility */
+  }
+
+  /* Change the color of the non-active pages */
+  .pagination .page-link {
+    background-color: white; /* Background color for non-active pages */
+    border-color: #400c06; /* Border color for non-active pages */
+    color: #400c06; /* Text color for non-active pages */
+  }

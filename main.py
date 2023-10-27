@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, flash, request, get_flashed_messages
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text, distinct, or_
+from sqlalchemy import text, distinct, or_, func
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import date, datetime
@@ -15,6 +15,7 @@ import os
 import json
 
 app = Flask(__name__)
+app.register_blueprint
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 ckeditor = CKEditor(app)
 Bootstrap(app)
@@ -105,10 +106,11 @@ class Schedule(db.Model):
     def __repr__(self):
         return f"Document(id={self.id}, case_id={self.case_id})"
 
+
 class Status(db.Model):
     __tablename__ = "status"
     id = db.Column(db.Integer, primary_key=True)
-    case_id = db.Column(db.Integer, db.ForeignKey('cases.id', onupdate='CASCADE'))
+    case_id = db.Column(db.Integer, db.ForeignKey('cases.id', onupdate='CASCADE'), index=True)
     remarks = db.Column(db.String(1000))
     status = db.Column(db.String(100))
     status_date = db.Column(db.Date)
@@ -180,7 +182,7 @@ def register():
                     salt_length=8
                 )
                 # Execute the query to insert the user
-                query = text("INSERT INTO user (user_lname, user_fname, user_mname, office, contact, status, type, date_created, username, password) " \
+                query = text("INSERT INTO user (user_lname, user_fname, user_mname, office, contact, status, type, date_created, username, password) "
                              "VALUES (:lname, :fname, :mname, :office, :contact, :status, :user_type, :today, :username, :password)")
 
                 last_name = request.form.get('lname')
@@ -305,9 +307,17 @@ def user_dashboard():
     # Generate a URL for the current endpoint with an empty search parameter
     reset_search_url = url_for('user_dashboard', page=page)
 
+    # count statuses
+    pending = db.session.query(func.count()).filter(Cases.status == "1").scalar()
+    archived = db.session.query(func.count()).filter(Cases.status == "2").scalar()
+    dismissed = db.session.query(func.count()).filter(Cases.status == "3").scalar()
+    for_demolition = db.session.query(func.count()).filter(Cases.status == "4").scalar()
+    demolished = db.session.query(func.count()).filter(Cases.status == "5").scalar()
+
     return render_template("user_dashboard.html", current_user=current_user, cases_paginated=cases_paginated,
                            pagination_range=pagination_range, for_deliberation=for_deliberation,
-                           search_term=search_term, reset_search_url=reset_search_url, get_barangay_name=get_barangay_name)
+                           search_term=search_term, reset_search_url=reset_search_url, get_barangay_name=get_barangay_name,
+                           pending=pending, archived=archived, dismissed=dismissed, for_demolition=for_demolition, demolished=demolished)
 
 
 @app.route('/AddCase', methods=["GET", "POST"])
@@ -420,12 +430,12 @@ def edit_case():
     csrf_token = generate_csrf()
     case_number = request.args.get('case_no')
     case = Cases.query.filter_by(case_no=case_number).first()  # Fetch the case based on case_no
-    case_on_schedule = Schedule.query.filter_by(case_id=case_number).first()
 
     if form.validate_on_submit():
         try:
             if case:
                 # Update the existing case
+
                 case.case_title = request.form.get('case_title').strip()
                 case.case_complainant = request.form.get('complainant_name').strip()
                 case.address_complainant = request.form.get('address_complainant').strip()
@@ -435,18 +445,18 @@ def edit_case():
                 case.contact_respondent = request.form.get('contact_respondent').strip()
                 case.location = request.form.get('location_of_structure').strip()
                 case.barangay = request.form.get('barangay')
-                case_on_schedule.case_title = request.form.get('case_title').strip()
 
+                #
                 db.session.commit()
-
-
+                #
+                #
                 flash("Case saved!")
                 return redirect(url_for('case', case_no=case_number))
             else:
                 flash("This case does not exist. Please provide a unique number.")
                 return redirect(url_for('add_case'))
         except Exception as e:
-            flash(f"An error occurred while saving the case and document: {str(e)}")
+            flash(f"An error occurred editing the case: {str(e)}")
             db.session.rollback()  # Rollback the transaction if an exception occurs
 
     return render_template("edit_case.html", current_user=current_user, form=form, case=case, csrf_token=csrf_token)
@@ -457,6 +467,7 @@ def edit_case():
 def case():
     form = AddFile()
     form1 = EditStatus()
+    # form2 = Schedule()
     csrf_token = generate_csrf()
     case_number = request.args.get('case_no')
     case = Cases.query.filter_by(case_no=case_number).first()  # Fetch the case based on case_no
@@ -485,7 +496,7 @@ def case():
                 new_document = Document(file_path=file_path)
 
                 # Execute the query to insert the document
-                query2 = text("INSERT INTO documents (case_id, user_id, document_type, file_path, upload_date) " \
+                query2 = text("INSERT INTO documents (case_id, user_id, document_type, file_path, upload_date) "
                               "VALUES (:case_id, :user_id, :docu_type, :path_file, :date_of_upload)")
                 #
                 case_id = case_number
@@ -518,7 +529,15 @@ def case():
             db.session.rollback()  # Rollback the transaction
             flash("Error saving file. Please try again later.")  # Flash an error message
             return redirect(url_for('case', case_no=case_number))
-    return render_template("case.html", case=case, docu=documents, form=form, form1=form1, csrf_token=csrf_token, user=users, sched=sched, barangay_name=barangay_name)
+    return render_template("case.html",
+                           case=case,
+                           docu=documents,
+                           form=form,
+                           form1=form1,
+                           csrf_token=csrf_token,
+                           user=users,
+                           sched=sched,
+                           barangay_name=barangay_name)
 
 @app.route('/schedule', methods=["GET", "POST"])
 def schedule():
@@ -527,45 +546,45 @@ def schedule():
     time_changed = datetime.today()
 
     if request.method == 'POST':
-        schedule_date = request.form['schedule']  # Access the date picker value from the form data
-        remarks = request.form['remarks']
-        schedule_date_obj = datetime.strptime(schedule_date, '%m/%d/%Y')
-        formatted_schedule_date = schedule_date_obj.strftime('%Y-%m-%d')
-
-        existing_schedule = Schedule.query.filter_by(case_id=case_number).first()
-        update_status = Cases.query.filter_by(case_no=case_number).first()
-
         try:
+            schedule_date = request.form.get('schedule')  # Access the date picker value from the form data
+            remarks = request.form.get('remarks')
+            schedule_date_obj = datetime.strptime(schedule_date, '%m/%d/%Y')
+            formatted_schedule_date = schedule_date_obj.strftime('%Y-%m-%d')
+
+            existing_schedule = Schedule.query.filter_by(case_id=case_number).first()
+            update_status = Cases.query.filter_by(case_no=case_number).first()
+
             if existing_schedule:
                 # Case with the same case number already exists, update the schedule
                 existing_schedule.schedule = formatted_schedule_date
                 existing_schedule.remarks = remarks
                 #existing_schedule.case_title = update_status.case_title
                 update_status.status = "6"
-                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status=status)
+                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status="6")
                 db.session.add(new_status)
             else:
                 # Case with the case number doesn't exist, add a new row
                 new_schedule = Schedule(case_id=case_number, schedule=formatted_schedule_date, remarks=remarks)
                 update_status.status = "6"
                 db.session.add(new_schedule)
-                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status=status)
+                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status="6")
                 db.session.add(new_status)
 
             db.session.commit()
             flash("Schedule successfully updated!")
 
             # Debugging statements
-            print(f"Debug: Case number - {case_number}")
-            print(f"Debug: Existing Schedule - {existing_schedule}")
-            print(f"Debug: Updated Status - {update_status.status}")
+            # print(f"Debug: Case number - {case_number}")
+            # print(f"Debug: Existing Schedule - { schedule_date }")
+            # print(f"Debug: Updated Status - {update_status.status}")
 
             flash("Schedule successfully updated!")
 
         except Exception as e:
             # Handle any exceptions that may occur during the database operation
             db.session.rollback()  # Rollback the transaction
-            flash(f"An error occurred while saving the case and document: {str(e)}")# Flash an error message
+            flash(f"An error occurred while saving the schedule: {str(e)}")# Flash an error message
 
         return redirect(url_for('case', case_no=case_number))
 
@@ -593,7 +612,11 @@ def scheduled():
     unique_schedule = sorted(unique_schedule)
 
 
-    return render_template("scheduled.html", schedule_date=unique_schedule, all_schedule = all_schedule, all_case = all_case,  get_title=get_title)
+    return render_template("scheduled.html",
+                           schedule_date=unique_schedule,
+                           all_schedule = all_schedule,
+                           all_case = all_case,
+                           get_title=get_title)
 
 def get_barangay_name(id):
     # Load the JSON data from the file
@@ -655,7 +678,6 @@ def accounts():
     page = max(1, page)  # Ensure the page is not less than 1
     per_page = 10  # Number of accounts per page
 
-    users_query = User.query
     # Get the search term from the query parameters with a default value of an empty string
     search_term = request.args.get('searchUser', '')
 
@@ -703,8 +725,42 @@ def accounts():
     # Generate a URL for the current endpoint with an empty search parameter
     reset_search_url = url_for('user_dashboard', page=page)
 
-    return render_template("accounts.html", users=users_paginated.items, users_paginated=users_paginated, pagination_range=pagination_range, search_term=search_term, reset_search_url=reset_search_url)
+    return render_template("accounts.html",
+                           users=users_paginated.items,
+                           users_paginated=users_paginated,
+                           pagination_range=pagination_range,
+                           search_term=search_term,
+                           reset_search_url=reset_search_url)
 
+
+@app.route('/ForScheduling', methods=["GET", "POST"])
+@login_required
+def for_scheduling():
+
+    # all schedule
+    all_schedule = db.session.query(Schedule).all()
+    #all cases
+    query = text("SELECT * FROM cases WHERE status = 6")
+    result_set = db.session.execute(query)
+
+    # Fetch all rows from the result set
+    all_case = result_set.fetchall()
+
+    # Query for unique case_id values
+    unique_schedule = db.session.query(distinct(Schedule.schedule)).all()
+
+    # Extract the unique case_id values from the result
+    unique_schedule = [schedule[0] for schedule in unique_schedule]
+
+    # Sort the dates directly
+    unique_schedule = sorted(unique_schedule)
+
+
+    return render_template("for_scheduling.html",
+                           schedule_date=unique_schedule,
+                           all_schedule = all_schedule,
+                           all_case = all_case,
+                           get_title=get_title)
 
 if __name__ == "__main__":
     app.run(debug=True)

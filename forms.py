@@ -96,12 +96,13 @@ class EditStatus(FlaskForm):
         ('3', 'Dismissed'),
         ('4', 'For Demolition'),
         ('5', 'Structure Demolished')
+
         # Add more options as needed
     ])
     remarks = TextAreaField("Remarks", validators=[DataRequired()])
 
-class Schedule(FlaskForm):
-    schedule = DateField('Date', validators=[DataRequired()])
-    remarks =  TextAreaField("Remarks", validators=[DataRequired(), no_spaces_only])
+# class Schedule(FlaskForm):
+#     schedule = DateField('Date', validators=[DataRequired()])
+#     sched_remarks = TextAreaField("Remarks", validators=[DataRequired(), no_spaces_only])
 
 
