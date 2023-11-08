@@ -129,6 +129,14 @@ class AuditTrail(db.Model):
     def __repr__(self):
         return f"Document(id={self.id}, case_id={self.case_id})"
 
+class Notes(db.Model):
+    __tablename__ = "notes"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', onupdate='CASCADE'))
+    case_id = db.Column(db.Integer, db.ForeignKey('cases.id', onupdate='CASCADE'), index=True)
+    note = db.Column(db.String(1000))
+    note_date = db.Column(db.DateTime)
+
 with app.app_context():
     db.create_all()
     print("success DB")
@@ -479,6 +487,11 @@ def case():
     sched = Schedule.query.filter_by(case_id=case_number).first()
     barangay_name = get_barangay_name(case.barangay)
 
+    existing_note = Notes.query.filter(
+        (Notes.case_id == case_number) &
+        (Notes.user_id == current_user.id)
+    ).first()
+
     if form.validate_on_submit():
         try:
             # Upload file and file path
@@ -537,7 +550,8 @@ def case():
                            csrf_token=csrf_token,
                            user=users,
                            sched=sched,
-                           barangay_name=barangay_name)
+                           barangay_name=barangay_name,
+                           notes=existing_note)
 
 @app.route('/schedule', methods=["GET", "POST"])
 def schedule():
@@ -761,6 +775,40 @@ def for_scheduling():
                            all_schedule = all_schedule,
                            all_case = all_case,
                            get_title=get_title)
+
+
+@app.route('/note', methods=["GET", "POST"])
+def note():
+    case_number = request.args.get('case_no')
+    time_note = datetime.now()
+    note_content = request.form.get('notes')
+
+    if request.method == 'POST':
+        existing_note = Notes.query.filter(
+            (Notes.case_id == case_number) &
+            (Notes.user_id == current_user.id)
+        ).first()
+        try:
+            if existing_note:
+                # Case with the same case number already exists, update the note
+                existing_note.note = note_content
+                existing_note.note_date = time_note
+            else:
+                # Case with the case number doesn't exist, add a new note
+                new_note = Notes(user_id=current_user.id, case_id=case_number, note=note_content, note_date=time_note)
+                db.session.add(new_note)
+
+            db.session.commit()
+            flash("Note successfully updated!")
+
+        except Exception as e:
+            # Handle any exceptions that may occur during the database operation
+            db.session.rollback()  # Rollback the transaction
+            flash(f"An error occurred while saving the note: {str(e)}")
+
+        return redirect(url_for('case', case_no=case_number))
+
+    return redirect(url_for('case', case_no=case_number))  # Add the appropriate template for rendering the form
 
 if __name__ == "__main__":
     app.run(debug=True)

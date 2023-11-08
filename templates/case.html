@@ -5,6 +5,7 @@
 <!--Custom CSS-->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/card_border.css')}}">
 
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-xl-2 col-lg-2 col-md-3 col-sm-3 col-2 bg-light shadow min-vh-100">
@@ -84,8 +85,34 @@
     <!--                        </div>-->
     <!--                    </div>-->
                 </div>
+
                 <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3">
-                        <div class=" px-sm-2 px-0 p-3 rounded mb-3">
+                        <div class=" px-sm-2 px-0 rounded">
+                            <div class = "col d-flex justify-content-between">
+                                 <div class="name">
+                                    <h5 style="color: #fca650">Notes</h5>
+                                 </div>
+                            </div>
+                            <hr>
+                            <div class = "d-flex justify-content-center mb-3">
+                                <a class="btn btn-light btn-align-left shadow" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                    <i class="bi bi-card-text"></i> Show Notes
+                                </a>
+                            </div>
+                            <div class="collapse" id="collapseExample">
+                              <div class="card card-body">
+                                <form method="POST" id="Note" enctype="multipart/form-data" action="{{ url_for('note', case_no=case.case_no) }}">
+                                    <textarea class="form-control mb-3" rows="2" name="notes">{{ notes.note }}</textarea>
+                                    <div class = "d-flex justify-content-end">
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                    </div>
+                                </form>
+                              </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3">
+                        <div class=" px-sm-2 px-0 rounded mb-3">
                             <div class = "col mb-3 d-flex justify-content-between">
                                  <div class="name">
                                     <h5 style="color: #fca650">Documents</h5>
@@ -96,6 +123,7 @@
                                     </a>
                                 </div>
                             </div>
+                            <hr>
                             <div class="card">
                                  {% for document in docu %}
                                     <button type="button" class="btn btn-light btn-align-left show-document radius-10 border-start border-0 border-3 border-regular" data-file-path="{{ document.file_path }}">
