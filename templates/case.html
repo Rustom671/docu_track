@@ -7,11 +7,11 @@
 
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-3 col-2 bg-light shadow min-vh-100">
-        {% include "sidebar.html" %}
+    <div class="row flex-nowrap">
+        <div class="col-xl-2 col-lg-2 col-md-3 col-2 bg-light shadow min-vh-100 position-fixed d-inline-block">
+            {% include "sidebar.html" %}
         </div>
-        <div class="col-xl-10 col-lg-10 col-md-9 col-sm-9 col-10">
+        <div class="col-xl-10 col-lg-10 col-md-9 col-10 offset-xl-2 offset-lg-2 offset-md-3 offset-2">
             <div class="py-3 px-lg-3 px-md-2 px-sm-3 px-xs-3" >
                 <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3">
                     <div class = "col mb-3 d-flex justify-content-between">
@@ -28,7 +28,7 @@
                     <div class = "d-flex justify-content-between">
                         <strong><p style="color: #12632a">Case Number: {{ case.case_no }}</p></strong>
                             <p class="nav-link" data-toggle="modal" data-target="#Status"><strong>Status:</strong>
-                                {% if case.status == "6" %}
+                                {% if case.status == "8" %}
                                     Scheduled for deliberation on &nbsp; {{ sched.schedule.strftime('%B %d, %Y')}}
                                 {% elif case.status == "1"  %}
                                     Pending
@@ -40,6 +40,10 @@
                                     For Demolition
                                 {% elif case.status == "5"  %}
                                     Structure Demolished
+                                {% elif case.status == "6"  %}
+                                    Deferred
+                                {% elif case.status == "7"  %}
+                                    For Resolution
 
                                 {% endif %}
                             </p>
@@ -48,24 +52,60 @@
                         </a>
                     </div>
                     <hr>
-                    <div>
-                        <p class="nav-link">Case Title: {{ case.case_title }}</p>
-                    </div>
+
                     <div class="d-md-flex">
-                        <div class = "col">
-                            <p class="nav-link"><i class="bi bi-person-badge"></i> Complainant: <strong>{{ case.case_complainant }}</strong></p>
-                            <p class="nav-link"><i class="bi bi-geo-alt-fill"></i> Address of Complainant: <strong>{{ case.address_complainant }}</strong></p>
-                            <p class="nav-link"><i class="bi bi-telephone-fill"></i> Contact Information of Complainant: <strong>{{ case.contact_complainant }}</strong></p>
+                        <div class="col-lg-2 justify-content-center" style="text-align: center">
+                            {% if case.category == "1" %}
+                                <img src="static/img/location-pin.png" style="width: 120px; height: 120px" class="rounded mx-auto d-block m-3" alt="Barracks Image">
+                                <h5 style="color: red"><strong>Registered Land</strong></h5>
+                            {% elif case.category == "2" %}
+                                <img src="static/img/mobile.png" style="width: 120px; height: 120px" class="rounded mx-auto d-block m-3" alt="Barracks Image">
+                                <h5 style="color: red"><strong>Unregistered Land</strong></h5>
+                            {% elif case.category == "3" %}
+                                <img src="static/img/road.png" style="width: 120px; height: 120px" class="rounded mx-auto d-block m-3" alt="Barracks Image">
+                                <h5 style="color: red"><strong>RROW</strong></h5>
+                            {% elif case.category == "4" %}
+                                <img src="static/img/forest.png" style="width: 120px; height: 120px" class="rounded mx-auto d-block m-3" alt="Barracks Image">
+                                <h5 style="color: red"><strong>Forest Reservation and Greenbelt Area</strong></h5>
+                            {% elif case.category == "5" %}
+                                <img src="static/img/river.png" style="width: 120px; height: 120px" class="rounded mx-auto d-block m-3" alt="Barracks Image">
+                                <h5><strong>Watershed</strong></h5>
+                            {% elif case.category == "6" %}
+                                <img src="static/img/creek.png" style="width: 120px; height: 120px" class="rounded mx-auto d-block m-3" alt="Barracks Image">
+                                <h5 style="color: red"><strong>Esteros and Waterway (Creek Easement)</strong></h5>
+                            {% elif case.category == "7" %}
+                                <img src="static/img/barracks.png" style="width: 120px; height: 120px" class="rounded mx-auto d-block m-3" alt="Barracks Image">
+                                <h5 style="color: red"><strong>Military Reservation</strong></h5>
+                            {% elif case.category == "8" %}
+                                <img src="static/img/government.png" style="width: 120px; height: 120px" class="rounded mx-auto d-block m-3" alt="Barracks Image">
+                                <h5 style="color: red"><strong>Government Reservation</strong></h5>
+                            {% elif case.category == "9" %}
+                                <img src="static/img/cityscape.png" style="width: 120px; height: 120px" class="rounded mx-auto d-block m-3" alt="Barracks Image">
+                                <h5 style="color: red"><strong>City / Barangay Needs</strong></h5>
+                            {% elif case.category == "10" %}
+                                <img src="static/img/house.png" style="width: 120px; height: 120px" class="rounded mx-auto d-block m-3" alt="Barracks Image">
+                                <h5 style="color: red"><strong>Others</strong></h5>
+                            {% endif %}
+
                         </div>
-                        <div class = "col">
-                            <p class="nav-link"><i class="bi bi-person-badge"></i> Respondent: <strong>{{ case.case_respondent }}</strong></p>
-                            <p class="nav-link"><i class="bi bi-geo-alt-fill"></i> Address of Respondent: <strong>{{ case.address_respondent }}</strong></p>
-                            <p class="nav-link"><i class="bi bi-telephone-fill"></i> Contact Information of Respondent: <strong>{{ case.contact_respondent }}</strong></p>
+                        <div class="col-lg-10">
+                            <div>
+                                <p class="nav-link">Case Title: {{ case.case_title }}</p>
+                            </div>
+                            <div class="d-md-flex m-3">
+                                <div class = "col-lg-6">
+                                    <p class="nav-link"><i class="bi bi-person-badge"></i> Complainant: <strong>{{ case.case_complainant }}</strong></p>
+                                    <p class="nav-link"><i class="bi bi-geo-alt-fill"></i> Address of Complainant: <strong>{{ case.address_complainant }}</strong></p>
+                                    <p class="nav-link"><i class="bi bi-telephone-fill"></i> Contact Information of Complainant: <strong>{{ case.contact_complainant }}</strong></p>
+                                    <p class="nav-link"><i class="bi bi-pin-map-fill"></i> Location of Subject Structure: <br><strong>{{case.location}},&nbsp;{{ barangay_name }}</strong></p>
+                                </div>
+                                <div class = "col-lg-6">
+                                    <p class="nav-link"><i class="bi bi-person-badge"></i> Respondent: <strong>{{ case.case_respondent }}</strong></p>
+                                    <p class="nav-link"><i class="bi bi-geo-alt-fill"></i> Address of Respondent: <strong>{{ case.address_respondent }}</strong></p>
+                                    <p class="nav-link"><i class="bi bi-telephone-fill"></i> Contact Information of Respondent: <strong>{{ case.contact_respondent }}</strong></p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="d-flex">
-                        <p class="nav-link"><i class="bi bi-pin-map-fill"></i> Location of Subject Structure: <strong>{{case.location}},</strong></p>
-                        <p class="nav-link"><strong>&nbsp;{{ barangay_name }}</strong></p>
                     </div>
                     <div class = "d-flex justify-content-center">
                         <a class="btn btn-labeled btn-success shadow" data-bs-toggle="modal" data-bs-target="#Sched">
@@ -95,14 +135,14 @@
                             </div>
                             <hr>
                             <div class = "d-flex justify-content-center mb-3">
-                                <a class="btn btn-light btn-align-left shadow" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                    <i class="bi bi-card-text"></i> Show Notes
+                                <a class="btn btn-light btn-align-left shadow" style="color: #400c06" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                    <i class="bi bi-card-text"></i> <span class="ms-1 d-none d-sm-inline">Show Notes</span>
                                 </a>
                             </div>
                             <div class="collapse" id="collapseExample">
                               <div class="card card-body">
                                 <form method="POST" id="Note" enctype="multipart/form-data" action="{{ url_for('note', case_no=case.case_no) }}">
-                                    <textarea class="form-control mb-3" rows="2" name="notes">{{ notes.note }}</textarea>
+                                    <textarea class="form-control mb-3" rows="3" name="notes">{{ notes.note }}</textarea>
                                     <div class = "d-flex justify-content-end">
                                         <button type="submit" class="btn btn-primary">Update</button>
                                     </div>
@@ -111,6 +151,33 @@
                             </div>
                         </div>
                 </div>
+
+                <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3">
+                        <div class=" px-sm-2 px-0 rounded">
+                            <div class = "col d-flex justify-content-between">
+                                 <div class="name">
+                                    <h5 style="color: #fca650">Executive Summary</h5>
+                                 </div>
+                            </div>
+                            <hr>
+                            <div class = "d-flex justify-content-center mb-3">
+                                <a class="btn btn-light btn-align-left shadow" style="color: #400c06" data-bs-toggle="collapse" href="#collapseSummary" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                    <i class="bi bi-list-ol"></i> <span class="ms-1 d-none d-sm-inline">Show Summary</span>
+                                </a>
+                            </div>
+                            <div class="collapse" id="collapseSummary">
+                              <div class="card card-body">
+                                <form method="POST" id="Summary" enctype="multipart/form-data" action="{{ url_for('summary', case_no=case.case_no) }}">
+                                    <textarea class="form-control mb-3" rows="3" name="summary">{{ summary.summary }}</textarea>
+                                    <div class = "d-flex justify-content-end">
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                    </div>
+                                </form>
+                              </div>
+                            </div>
+                        </div>
+                </div>
+
                 <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3">
                         <div class=" px-sm-2 px-0 rounded mb-3">
                             <div class = "col mb-3 d-flex justify-content-between">
@@ -126,7 +193,7 @@
                             <hr>
                             <div class="card">
                                  {% for document in docu %}
-                                    <button type="button" class="btn btn-light btn-align-left show-document radius-10 border-start border-0 border-3 border-regular" data-file-path="{{ document.file_path }}">
+                                    <button type="button" class="btn btn-light btn-align-left show-document radius-10 border-start border-0 border-3 border-regular" data-file-path="{{ document.file_path }}" document-id="{{ document.id }}">
                                         <div class="d-flex justify-content-between ">
                                             <div class="d-flex">
                                                 {% if document.document_type == "1" %}
@@ -189,10 +256,10 @@
                     </div>
                     <!-- Modal to display-->
                     <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-lg">
+                      <div class="modal-dialog modal-xl">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Files</h1>
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Files </h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
@@ -203,7 +270,7 @@
                                     <input type="submit" value="Upload Resolution">
                                 </form>
                             </div>
-                            <iframe id="pdfViewerModal" width="100%" height="800px"></iframe>
+                            <iframe id="pdfViewerModal" width="100%" height="800px" allow="autoplay"></iframe>
                           </div>
     <!--                          <div class="modal-footer">-->
     <!--                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
@@ -344,7 +411,7 @@
                             showDocumentButtons.forEach(button => {
                                 button.addEventListener('click', () => {
                                     const filePath = button.getAttribute('data-file-path');
-
+                                    var id = button.getAttribute('document.id');
                                     // Open the modal
                                     $(pdfModal).modal('show');
 
@@ -363,12 +430,6 @@
 
 <!-- Add this JavaScript code after your content -->
 <script>
- // Prevent form submission and update content
-  $('#saveBtn').click(function(event) {
-    event.preventDefault();
-
-  });
-
 $('#datepicker').datepicker({
     uiLibrary: 'bootstrap5',
     format: 'mm/dd/yyyy',

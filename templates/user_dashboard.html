@@ -8,11 +8,10 @@
 
 <div class="container-fluid">
     <div class="row flex-nowrap">
-        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-3 col-2 bg-light shadow min-vh-100">
+        <div class="col-xl-2 col-lg-2 col-md-3 col-2 bg-light shadow min-vh-100 position-fixed d-inline-block">
             {% include "sidebar.html" %}
         </div>
-        <div class="col-xl-10 col-lg-10 col-md-9 col-sm-9 col-10">
-
+        <div class="col-xl-10 col-lg-10 col-md-9 col-10 offset-xl-2 offset-lg-2 offset-md-3 offset-2">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="mb-3 mt-3">
@@ -22,14 +21,14 @@
                                         <h5><strong>Hi {{current_user.user_fname}}!</strong></h5>
                                     </div>
                                     <div class="d-md-flex">
-                                        <div class="col-md-6" style="justify-content: center;">
+                                        <div class="col-lg-6 col-md-12 col-sm-12" style="justify-content: center;">
                                              <h5 class="text-center p-3"><strong>Cases Statistics</strong></h5>
                                              <div id="piechart">
 
                                              </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="p-3" id="calendar">
+                                        <div class="col-lg-6 col-md-12 col-sm-12 d-none d-md-inline">
+                                            <div class = "col m-3 d-flex justify-content-between">
 
                                             </div>
                                             <p id="pending" style="display: none">{{ pending }}</p>
@@ -37,6 +36,8 @@
                                             <p id="dismissed" style="display: none">{{ dismissed }}</p>
                                             <p id="for_demolition" style="display: none">{{ for_demolition }}</p>
                                             <p id="demolished" style="display: none">{{ demolished }}</p>
+                                            <p id="deferred" style="display: none">{{ deferred }}</p>
+                                            <p id="for_resolution" style="display: none">{{ for_resolution }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -82,23 +83,46 @@
                             </div>
                             <div class="d-flex justify-content-between align-items-center pb-2">
                                 <div class="col-md-8 d-flex align-items-center flex-wrap"> <!-- Adjust the column width based on your design -->
-                                    <div>
-                                        <i class='fas fa-folder' style='color:#eac86c; font-size: 40px;'></i>
+                                    <div class="d-none d-lg-inline">
+                                        {% if case.category == "1" %}
+                                            <img src="static/img/location-pin.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
+                                        {% elif case.category == "2" %}
+                                            <img src="static/img/mobile.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
+                                        {% elif case.category == "3" %}
+                                            <img src="static/img/road.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
+                                        {% elif case.category == "4" %}
+                                            <img src="static/img/forest.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
+                                        {% elif case.category == "5" %}
+                                            <img src="static/img/river.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
+                                        {% elif case.category == "6" %}
+                                            <img src="static/img/creek.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
+                                        {% elif case.category == "7" %}
+                                            <img src="static/img/barracks.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
+                                        {% elif case.category == "8" %}
+                                            <img src="static/img/government.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
+                                        {% elif case.category == "9" %}
+                                            <img src="static/img/cityscape.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
+                                        {% elif case.category == "10" %}
+                                            <img src="static/img/house.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
+                                        {% endif %}
                                     </div>
                                     <div class="text-wrap">
                                         <p class="nav-link ms-2 mb-0 text-wrap">{{ case.case_title }}</p>
                                         {% if case.date_created %}
                                             {% set formatted_date = case.date_created.strftime('%B %d, %Y %I:%M %p') %}
-                                            <p class="nav-link ms-2 mb-0">Date received: {{ formatted_date }}</p>
+                                            <p class="nav-link ms-2 mb-0 d-none d-md-inline">Date received: {{ formatted_date }}</p>
                                         {% else %}
-                                            <p class="nav-link ms-2 mb-0">Date received: </p>
+                                            <p class="nav-link ms-2 mb-0 d-none d-md-inline">Date received: </p>
                                         {% endif %}
-                                        <p class="nav-link ms-2 mb-0 text-wrap">Location:&nbsp;{{ case.location }},&nbsp;{{ get_barangay_name(case.barangay) }}</p>
+                                        <br>
+                                        <p class="nav-link ms-2 mb-0 text-wrap d-none d-md-inline">
+                                            Location:&nbsp;{{ case.location }},&nbsp;{{ get_barangay_name(case.barangay) }}
+                                        </p>
                                     </div>
                                 </div>
-                                <div class="col-md-4 text-end"> <!-- Adjust the column width based on your design -->
+                                <div class="col-md-4 text-end d-none d-md-inline"> <!-- Adjust the column width based on your design -->
                                     <p class="nav-link">
-                                        {% if case.status == "6" %}
+                                        {% if case.status == "8" %}
                                             Scheduled for deliberation
                                         {% elif case.status == "1"  %}
                                             Pending
@@ -110,6 +134,10 @@
                                             For Demolition
                                         {% elif case.status == "5"  %}
                                             Structure Demolished
+                                        {% elif case.status == "6"  %}
+                                            Deferred
+                                        {% elif case.status == "7"  %}
+                                            For Resolution
                                         {% endif %}
                                     </p>
                                 </div>
@@ -196,6 +224,8 @@ var archivedElement = document.getElementById("archived");
 var dismissedElement = document.getElementById("dismissed");
 var fordemolitionElement = document.getElementById("for_demolition");
 var demolishedElement = document.getElementById("demolished");
+var deferredElement = document.getElementById("deferred");
+var forresolutionElement = document.getElementById("for_resolution");
 
 // Get the text content of the element and parse it as an integer
 var pendingValue = parseInt(pendingElement.textContent);
@@ -203,6 +233,8 @@ var archivedValue = parseInt(archivedElement.textContent);
 var dismissedValue = parseInt(dismissedElement.textContent);
 var fordemolitionValue = parseInt(fordemolitionElement.textContent);
 var demolishedValue = parseInt(demolishedElement.textContent);
+var deferredValue = parseInt(deferredElement.textContent);
+var forresolutionValue = parseInt(forresolutionElement.textContent);
 
 // Draw the chart and set the chart values
 function drawChart() {
@@ -212,7 +244,9 @@ function drawChart() {
     ['Archived (' + archivedValue + ')', archivedValue],
     ['Dismissed (' + dismissedValue + ')', dismissedValue],
     ['For Demolition (' + fordemolitionValue + ')', fordemolitionValue],
-    ['Demolished (' + demolishedValue + ')', demolishedValue]
+    ['Demolished (' + demolishedValue + ')', demolishedValue],
+    ['Deferred (' + deferredValue + ')', deferredValue],
+    ['For Resolution (' + forresolutionValue + ')', forresolutionValue]
   ]);
 
   // Calculate the width and height based on the container size
@@ -224,7 +258,7 @@ function drawChart() {
   var options = {
     'width': containerWidth,
     'height': containerHeight * 0.6,
-    'colors': ['#400c06', '#663d38', '#8c6d6a', '#b39e9b', '#d9cecd', '#ffe69c'],
+    'colors': ['#400c06', '#663d38', '#8c6d6a', '#b39e9b', '#d9cecd', '#ffe69c', '#c0c7ca', '#eacf9a'],
     'pieHole': 0.4,
     'legend': {
         'position': 'right', // Change the position to 'bottom', 'left', 'right', or 'none'

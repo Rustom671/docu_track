@@ -51,6 +51,19 @@ class LoginForm(FlaskForm):
 class AddCase(FlaskForm):
     case_no = StringField("Case Number", validators=[DataRequired(), no_spaces_only])
     case_title = TextAreaField("Case Title", validators=[DataRequired(), no_spaces_only])
+    case_category = SelectField("", validators=[DataRequired()], choices=[
+        ('1', 'Registered Land'),
+        ('2', 'Unregistered Land'),
+        ('3', 'Road Right-of-Way (RROW)'),
+        ('4', 'Forest Reservation and Greenbel Area'),
+        ('5', 'Watershed'),
+        ('6', 'Esteros and Waterway'),
+        ('7', 'Military Reservation'),
+        ('8', 'Government Reservation'),
+        ('9', 'City / Barangay Needs'),
+        ('10', 'Others')
+        # Add more options as needed
+    ])
     complainant_name = TextAreaField("Name of Complainant", validators=[DataRequired(), no_spaces_only])
     contact_complainant = StringField("Contact Information", validators=[DataRequired(), no_spaces_only])
     address_complainant = StringField("Address of Complainant", validators=[DataRequired(), no_spaces_only])
@@ -64,6 +77,19 @@ class AddCase(FlaskForm):
 class EditCase(FlaskForm):
     case_no = StringField("Case Number")
     case_title = TextAreaField("Case Title", validators=[DataRequired(), no_spaces_only])
+    case_category = SelectField("", validators=[DataRequired()], choices=[
+        ('1', 'Registered Land'),
+        ('2', 'Unregistered Land'),
+        ('3', 'Road Right-of-Way (RROW)'),
+        ('4', 'Forest Reservation and Greenbelt Area'),
+        ('5', 'Watershed'),
+        ('6', 'Esteros and Waterway'),
+        ('7', 'Military Reservation'),
+        ('8', 'Government Reservation'),
+        ('9', 'City / Barangay Needs'),
+        ('10', 'Others')
+        # Add more options as needed
+    ])
     complainant_name = TextAreaField("Name of Complainant", validators=[DataRequired(), no_spaces_only])
     contact_complainant = StringField("Contact Information", validators=[DataRequired(), no_spaces_only])
     address_complainant = StringField("Address of Complainant", validators=[DataRequired(), no_spaces_only])
@@ -95,11 +121,16 @@ class EditStatus(FlaskForm):
         ('2', 'Archived'),
         ('3', 'Dismissed'),
         ('4', 'For Demolition'),
-        ('5', 'Structure Demolished')
+        ('5', 'Structure Demolished'),
+        ('6', 'Defer'),
+        ('7', 'For Resolution')
 
         # Add more options as needed
     ])
-    remarks = TextAreaField("Remarks", validators=[DataRequired()])
+    remarks = TextAreaField("Remarks")
+
+class ReplaceFile(FlaskForm):
+    files = FileField("File Upload", validators=[DataRequired()])
 
 # class Schedule(FlaskForm):
 #     schedule = DateField('Date', validators=[DataRequired()])

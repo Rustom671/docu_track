@@ -3,15 +3,14 @@
 {% include "header_test.html" %}
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script>
 <!--Custom CSS-->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/calendar.css')}}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pagination.css')}}">
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-xl-2 col-lg-2 col-md-3 col-sm-3 col-2 bg-light shadow min-vh-100">
-        {% include "sidebar.html" %}
+    <div class="row flex-nowrap">
+        <div class="col-xl-2 col-lg-2 col-md-3 col-2 bg-light shadow min-vh-100 position-fixed d-inline-block">
+            {% include "sidebar.html" %}
         </div>
-        <div class="col-xl-10 col-lg-10 col-md-9 col-sm-9 col-10">
+        <div class="col-xl-10 col-lg-10 col-md-9 col-10 offset-xl-2 offset-lg-2 offset-md-3 offset-2">
             <div class="py-3 px-lg-3 px-md-2 px-sm-3 px-xs-3" >
                 <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3">
                     <div class="col">

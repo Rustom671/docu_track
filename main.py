@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, get_flashed_messages
+from flask import Flask, render_template, redirect, url_for, flash, request, get_flashed_messages, Blueprint
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text, distinct, or_, func
@@ -8,7 +8,7 @@ from datetime import date, datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from forms import CreatePostForm, RegisterForm, LoginForm, AddCase, AddFile, EditCase, EditStatus
+from forms import CreatePostForm, RegisterForm, LoginForm, AddCase, AddFile, EditCase, EditStatus, ReplaceFile
 from flask_wtf.csrf import generate_csrf
 from flask import request
 import os
@@ -65,18 +65,19 @@ class User(UserMixin, db.Model):
 class Cases(UserMixin, db.Model):
     __tablename__ = "cases"
     id = db.Column(db.Integer, primary_key=True)
-    case_no = db.Column(db.String(45))
-    case_title = db.Column(db.String(250))
-    case_complainant = db.Column(db.String(500))
-    address_complainant = db.Column(db.String(500))
-    contact_complainant = db.Column(db.String(500))
-    case_respondent = db.Column(db.String(500))
-    address_respondent = db.Column(db.String(500))
-    contact_respondent = db.Column(db.String(500))
-    location = db.Column(db.String(500))
-    barangay = db.Column(db.String(500))
+    case_no = db.Column(db.String(20))
+    case_title = db.Column(db.String(200))
+    case_complainant = db.Column(db.String(100))
+    address_complainant = db.Column(db.String(150))
+    contact_complainant = db.Column(db.String(100))
+    case_respondent = db.Column(db.String(100))
+    address_respondent = db.Column(db.String(150))
+    contact_respondent = db.Column(db.String(100))
+    location = db.Column(db.String(100))
+    barangay = db.Column(db.String(10))
     date_created = db.Column(db.DateTime)
-    status = db.Column(db.String(100))
+    status = db.Column(db.String(10))
+    category = db.Column(db.String(10))
     documents = db.relationship("Document", backref="case", lazy=True)
 
     def get_id(self):
@@ -107,11 +108,22 @@ class Schedule(db.Model):
         return f"Document(id={self.id}, case_id={self.case_id})"
 
 
+class DemolitionSchedule(db.Model):
+    __tablename__ = "demolitionschedule"
+    id = db.Column(db.Integer, primary_key=True)
+    case_id = db.Column(db.Integer, db.ForeignKey('cases.id', onupdate='CASCADE'))
+    schedule = db.Column(db.Date)
+    remarks = db.Column(db.String(1000))
+
+    def __repr__(self):
+        return f"Document(id={self.id}, case_id={self.case_id})"
+
+
 class Status(db.Model):
     __tablename__ = "status"
     id = db.Column(db.Integer, primary_key=True)
     case_id = db.Column(db.Integer, db.ForeignKey('cases.id', onupdate='CASCADE'), index=True)
-    remarks = db.Column(db.String(1000))
+    remarks = db.Column(db.String(100))
     status = db.Column(db.String(100))
     status_date = db.Column(db.Date)
 
@@ -123,7 +135,7 @@ class AuditTrail(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', onupdate='CASCADE'))
     case_id = db.Column(db.Integer, db.ForeignKey('cases.id', onupdate='CASCADE'))
-    action = db.Column(db.String(1000))
+    action = db.Column(db.String(100))
     action_date = db.Column(db.Date)
 
     def __repr__(self):
@@ -136,6 +148,14 @@ class Notes(db.Model):
     case_id = db.Column(db.Integer, db.ForeignKey('cases.id', onupdate='CASCADE'), index=True)
     note = db.Column(db.String(1000))
     note_date = db.Column(db.DateTime)
+
+class Summary(db.Model):
+    __tablename__ = "summary"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', onupdate='CASCADE'))
+    case_id = db.Column(db.Integer, db.ForeignKey('cases.id', onupdate='CASCADE'), index=True)
+    summary = db.Column(db.String(1000))
+    summary_date = db.Column(db.DateTime)
 
 with app.app_context():
     db.create_all()
@@ -162,7 +182,6 @@ def load_user(id):
 
 @app.route('/')
 def get_all_posts():
-
     return render_template("index.html")
 
 
@@ -316,16 +335,19 @@ def user_dashboard():
     reset_search_url = url_for('user_dashboard', page=page)
 
     # count statuses
-    pending = db.session.query(func.count()).filter(Cases.status == "1").scalar()
+    pending = db.session.query(func.count()).filter(or_(Cases.status == "1", Cases.status == "8")).scalar()
     archived = db.session.query(func.count()).filter(Cases.status == "2").scalar()
     dismissed = db.session.query(func.count()).filter(Cases.status == "3").scalar()
     for_demolition = db.session.query(func.count()).filter(Cases.status == "4").scalar()
     demolished = db.session.query(func.count()).filter(Cases.status == "5").scalar()
+    deferred = db.session.query(func.count()).filter(Cases.status == "6").scalar()
+    for_resolution = db.session.query(func.count()).filter(Cases.status == "7").scalar()
 
     return render_template("user_dashboard.html", current_user=current_user, cases_paginated=cases_paginated,
                            pagination_range=pagination_range, for_deliberation=for_deliberation,
                            search_term=search_term, reset_search_url=reset_search_url, get_barangay_name=get_barangay_name,
-                           pending=pending, archived=archived, dismissed=dismissed, for_demolition=for_demolition, demolished=demolished)
+                           pending=pending, archived=archived, dismissed=dismissed, for_demolition=for_demolition, demolished=demolished,
+                           deferred=deferred, for_resolution=for_resolution)
 
 
 @app.route('/AddCase', methods=["GET", "POST"])
@@ -350,8 +372,8 @@ def add_case():
             try:
                 # Execute the query to insert the case
                 query1 = text(
-                    "INSERT INTO cases (case_no, case_title, case_complainant, address_complainant, contact_complainant, case_respondent, address_respondent, contact_respondent, location, barangay, date_created, status) " \
-                    "VALUES (:case_numb, :case_tit, :comp_name, :address_com, :con_complainant, :resp_name, :address_res, :con_respondent, :loc_struct, :barangay_struct, :today, :status)")
+                    "INSERT INTO cases (case_no, case_title, case_complainant, address_complainant, contact_complainant, case_respondent, address_respondent, contact_respondent, location, barangay, date_created, status, category) " \
+                    "VALUES (:case_numb, :case_tit, :comp_name, :address_com, :con_complainant, :resp_name, :address_res, :con_respondent, :loc_struct, :barangay_struct, :today, :status, :category)")
                 #
                 case_number = request.form.get('case_no').strip()
                 title = request.form.get('case_title').strip()
@@ -363,6 +385,7 @@ def add_case():
                 con_res = request.form.get('contact_respondent').strip()
                 struct_loc = request.form.get('location_of_structure').strip()
                 brgy = form.barangay.data
+                categ = form.case_category.data
                 today = datetime.today()
                 formatted_date = today.strftime('%Y-%m-%dT%H:%M:%S')
                 case_stat = "1"
@@ -380,6 +403,7 @@ def add_case():
                     'barangay_struct': brgy,
                     'today': formatted_date,
                     'status': case_stat,
+                    'category': categ
                 }
                 db.session.execute(query1, values)
                 # Commit the changes and close the database connection
@@ -435,9 +459,13 @@ def add_case():
 @login_required
 def edit_case():
     form = EditCase()
+    replace = ReplaceFile()
     csrf_token = generate_csrf()
     case_number = request.args.get('case_no')
     case = Cases.query.filter_by(case_no=case_number).first()  # Fetch the case based on case_no
+    documents = Document.query.filter_by(case_id=case_number).all()
+    # Fetch all user
+    users = User.query.all()
 
     if form.validate_on_submit():
         try:
@@ -446,6 +474,7 @@ def edit_case():
 
                 case.case_title = request.form.get('case_title').strip()
                 case.case_complainant = request.form.get('complainant_name').strip()
+                case.category = request.form.get('case_category')
                 case.address_complainant = request.form.get('address_complainant').strip()
                 case.contact_complainant = request.form.get('contact_complainant').strip()
                 case.case_respondent = request.form.get('respondent_name').strip()
@@ -459,7 +488,7 @@ def edit_case():
                 #
                 #
                 flash("Case saved!")
-                return redirect(url_for('case', case_no=case_number))
+                return redirect(url_for("case", case_no=case_number))
             else:
                 flash("This case does not exist. Please provide a unique number.")
                 return redirect(url_for('add_case'))
@@ -467,7 +496,7 @@ def edit_case():
             flash(f"An error occurred editing the case: {str(e)}")
             db.session.rollback()  # Rollback the transaction if an exception occurs
 
-    return render_template("edit_case.html", current_user=current_user, form=form, case=case, csrf_token=csrf_token)
+    return render_template("edit_case.html", current_user=current_user, form=form, case=case, csrf_token=csrf_token, case_no=case_number, docu=documents, user=users, replace_form=replace)
 
 
 @app.route('/case', methods=["GET", "POST"])
@@ -490,6 +519,11 @@ def case():
     existing_note = Notes.query.filter(
         (Notes.case_id == case_number) &
         (Notes.user_id == current_user.id)
+    ).first()
+
+    existing_summary = Summary.query.filter(
+        (Summary.case_id == case_number) &
+        (Summary.user_id == current_user.id)
     ).first()
 
     if form.validate_on_submit():
@@ -551,9 +585,11 @@ def case():
                            user=users,
                            sched=sched,
                            barangay_name=barangay_name,
-                           notes=existing_note)
+                           notes=existing_note,
+                           summary=existing_summary)
 
 @app.route('/schedule', methods=["GET", "POST"])
+@login_required
 def schedule():
 
     case_number = request.args.get('case_no')
@@ -574,15 +610,15 @@ def schedule():
                 existing_schedule.schedule = formatted_schedule_date
                 existing_schedule.remarks = remarks
                 #existing_schedule.case_title = update_status.case_title
-                update_status.status = "6"
-                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status="6")
+                update_status.status = "8"
+                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status="8")
                 db.session.add(new_status)
             else:
                 # Case with the case number doesn't exist, add a new row
                 new_schedule = Schedule(case_id=case_number, schedule=formatted_schedule_date, remarks=remarks)
-                update_status.status = "6"
+                update_status.status = "8"
                 db.session.add(new_schedule)
-                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status="6")
+                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status="8")
                 db.session.add(new_status)
 
             db.session.commit()
@@ -610,7 +646,7 @@ def scheduled():
     # all schedule
     all_schedule = db.session.query(Schedule).all()
     #all cases
-    query = text("SELECT * FROM cases WHERE status = 6")
+    query = text("SELECT * FROM cases WHERE status = 8")
     result_set = db.session.execute(query)
 
     # Fetch all rows from the result set
@@ -664,7 +700,7 @@ def status():
         time_changed = datetime.today()
         try:
             case = Cases.query.filter_by(case_no=case_number).first()
-            if case.status == "6":
+            if case.status == "8":
                 delete_case = Schedule.query.filter_by(case_id=case_number).first()
                 db.session.delete(delete_case)
                 case.status = status
@@ -750,31 +786,22 @@ def accounts():
 @app.route('/ForScheduling', methods=["GET", "POST"])
 @login_required
 def for_scheduling():
+    result = db.session.query(
+        Cases.case_no,
+        Cases.case_title,
+        Cases.location,
+        Cases.barangay
+    ).join(Document). \
+        filter(Document.document_type.in_([5, 6])). \
+        filter(Cases.status == 1).group_by(
+            Cases.case_no,
+            Cases.case_title,
+            Cases.location,
+            Cases.barangay
+        ). \
+        having(func.count(Document.document_type.distinct()) == 2).all()
 
-    # all schedule
-    all_schedule = db.session.query(Schedule).all()
-    #all cases
-    query = text("SELECT * FROM cases WHERE status = 6")
-    result_set = db.session.execute(query)
-
-    # Fetch all rows from the result set
-    all_case = result_set.fetchall()
-
-    # Query for unique case_id values
-    unique_schedule = db.session.query(distinct(Schedule.schedule)).all()
-
-    # Extract the unique case_id values from the result
-    unique_schedule = [schedule[0] for schedule in unique_schedule]
-
-    # Sort the dates directly
-    unique_schedule = sorted(unique_schedule)
-
-
-    return render_template("for_scheduling.html",
-                           schedule_date=unique_schedule,
-                           all_schedule = all_schedule,
-                           all_case = all_case,
-                           get_title=get_title)
+    return render_template("for_scheduling.html", case=result, get_barangay_name=get_barangay_name)
 
 
 @app.route('/note', methods=["GET", "POST"])
@@ -809,6 +836,167 @@ def note():
         return redirect(url_for('case', case_no=case_number))
 
     return redirect(url_for('case', case_no=case_number))  # Add the appropriate template for rendering the form
+
+@app.route('/summary', methods=["GET", "POST"])
+def summary():
+    case_number = request.args.get('case_no')
+    time_summary = datetime.now()
+    summary_content = request.form.get('summary')
+
+    if request.method == 'POST':
+        existing_summary = Summary.query.filter(
+            (Summary.case_id == case_number) &
+            (Summary.user_id == current_user.id)
+        ).first()
+        try:
+            if existing_summary:
+                # Case with the same case number already exists, update the note
+                existing_summary.summary = summary_content
+                existing_summary.summary_date = time_summary
+            else:
+                # Case with the case number doesn't exist, add a new note
+                new_summary = Summary(user_id=current_user.id, case_id=case_number, summary=summary_content, summary_date=time_summary)
+                db.session.add(new_summary)
+
+            db.session.commit()
+            flash("Executive summary successfully updated!")
+
+        except Exception as e:
+            # Handle any exceptions that may occur during the database operation
+            db.session.rollback()  # Rollback the transaction
+            flash(f"An error occurred while saving the Executive Summary: {str(e)}")
+
+        return redirect(url_for('case', case_no=case_number))
+
+    return redirect(url_for('case', case_no=case_number))  # Add the appropriate template for rendering the form
+
+app.route('/demolition_schedule', methods=["GET", "POST"])
+@login_required
+def demolition_schedule():
+
+    case_number = request.args.get('case_no')
+    time_changed = datetime.today()
+
+    if request.method == 'POST':
+        try:
+            schedule_date = request.form.get('schedule')  # Access the date picker value from the form data
+            remarks = request.form.get('remarks')
+            schedule_date_obj = datetime.strptime(schedule_date, '%m/%d/%Y')
+            formatted_schedule_date = schedule_date_obj.strftime('%Y-%m-%d')
+
+            existing_schedule = Schedule.query.filter_by(case_id=case_number).first()
+            update_status = Cases.query.filter_by(case_no=case_number).first()
+
+            if existing_schedule:
+                # Case with the same case number already exists, update the schedule
+                existing_schedule.schedule = formatted_schedule_date
+                existing_schedule.remarks = remarks
+                #existing_schedule.case_title = update_status.case_title
+                update_status.status = "8"
+                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status="8")
+                db.session.add(new_status)
+            else:
+                # Case with the case number doesn't exist, add a new row
+                new_schedule = Schedule(case_id=case_number, schedule=formatted_schedule_date, remarks=remarks)
+                update_status.status = "8"
+                db.session.add(new_schedule)
+                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status="8")
+                db.session.add(new_status)
+
+            db.session.commit()
+            flash("Schedule successfully updated!")
+
+            # Debugging statements
+            # print(f"Debug: Case number - {case_number}")
+            # print(f"Debug: Existing Schedule - { schedule_date }")
+            # print(f"Debug: Updated Status - {update_status.status}")
+
+            flash("Schedule successfully updated!")
+
+        except Exception as e:
+            # Handle any exceptions that may occur during the database operation
+            db.session.rollback()  # Rollback the transaction
+            flash(f"An error occurred while saving the schedule: {str(e)}")# Flash an error message
+
+        return redirect(url_for('case', case_no=case_number))
+
+@app.route('/replace-doc', methods=["GET", "POST"])
+def replace_doc():
+    form = EditCase()
+    csrf_token = generate_csrf()
+    replace_form = ReplaceFile()
+    case_number = request.args.get('case_no')
+    case = Cases.query.filter_by(case_no=case_number).first()  # Fetch the case based on case_no
+    doc_id = request.form.get('docid')
+    documents = Document.query.filter_by(case_id=case_number).all()
+    change_doc = Document.query.filter_by(id=doc_id).first()
+    users = User.query.all()
+
+    if replace_form.validate_on_submit():
+        try:
+            if documents and change_doc:
+                # Upload file and file path
+                today = datetime.today()
+                formatted_date = today.strftime('%Y-%m-%dT%H:%M:%S')
+                user_id = current_user.id
+                uploaded_file = replace_form.files.data
+                if uploaded_file.filename != '' and allowed_file(uploaded_file.filename):
+                    current_time = datetime.now().strftime("%Y%m%d%H%M%S")
+                    filename = secure_filename(uploaded_file.filename)
+                    unique_filename = f"{current_time}_{filename}"
+
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+                    uploaded_file.save(file_path)
+
+                    new_document = Document(file_path=file_path)
+
+                # Update the file_path attribute in the database
+                change_doc.file_path = new_document.file_path
+                change_doc.upload_date = formatted_date
+                change_doc.user_id = user_id
+                db.session.commit()
+
+                flash("File replaced!")
+                return redirect(url_for("case", case_no=case_number))
+            else:
+                flash("This case or document does not exist.")
+                return redirect(url_for("case", case_no=case_number))
+        except Exception as e:
+            flash(f"An error occurred editing the case: {str(e)}")
+            db.session.rollback()  # Rollback the transaction if an exception occurs
+
+    return render_template("edit_case.html", current_user=current_user, form=form, case=case, csrf_token=csrf_token,
+                           case_no=case_number, docu=documents, user=users, replace=replace_form)
+
+@app.route('/delete-doc', methods=["GET", "POST"])
+def delete_doc():
+    csrf_token = generate_csrf()
+    case_number = request.args.get('case_no')
+    case = Cases.query.filter_by(case_no=case_number).first()  # Fetch the case based on case_no
+    doc_id = request.form.get('dociddelete')
+    documents = Document.query.filter_by(case_id=case_number).all()
+    change_doc = Document.query.filter_by(id=doc_id).first()
+    users = User.query.all()
+
+
+    try:
+        if documents and change_doc:
+            # Update the file_path attribute in the database
+            db.session.delete(change_doc)
+            db.session.commit()
+
+            flash("File deleted!")
+            return redirect(url_for("case", case_no=case_number))
+        else:
+            flash("This case or document does not exist.")
+            return redirect(url_for("case", case_no=case_number))
+    except Exception as e:
+        flash(f"An error occurred while deleting the case: {str(e)}")
+        db.session.rollback()  # Rollback the transaction if an exception occurs
+
+    return render_template("edit_case.html", current_user=current_user, case=case, csrf_token=csrf_token,
+                           case_no=case_number, docu=documents, user=users)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

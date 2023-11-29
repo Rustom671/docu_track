@@ -17,16 +17,21 @@
             {% for field in form %}
                 {% if field.name == 'username' %}
                 <div class="form-field d-flex align-items-center">
-                    <span class="far fa-user"></span>
+                    <span class="fas fa-user"></span>
                     <input type="text" placeholder="Username" name="{{ field.name }}" required="True">
                 </div>
                 {% elif field.name == 'password' %}
                 <div class="form-field d-flex align-items-center">
                     <span class="fas fa-key"></span>
-                    <input type="password" name="{{ field.name }}" placeholder="Password" required="True">
+                    <input type="password" name="{{ field.name }}" placeholder="Password" required="True" id="inputPassword">
                 </div>
                 {% endif %}
             {% endfor %}
+
+              <div class="form-check d-flex justify-content-center align-items-center">
+                  <input class="form-check-input" type="checkbox" onclick="show()" id="showPassword">
+                  <label class="form-check-label mt-1" for="showPassword">&nbsp Show Password</label>
+              </div>
 
             {% with messages = get_flashed_messages() %}
                {% if messages %}
@@ -42,7 +47,7 @@
         </form>
 
             <div class="text-center fs-6">
-                <a href="#">Forget password?</a> or <a href="{{ url_for('register') }}">Sign up</a>
+                <a href="#">Forget password?</a> or &nbsp;&nbsp;<a href="{{ url_for('register') }}">Sign up</a>
             </div>
     </div>
 
@@ -66,7 +71,7 @@ window.onload = function () {
         var icon = "success"; // Default icon is "success"
         var goodjob = "Good Job!"
         // Check if the message contains the word "error" or "failed" (you can adjust this condition as needed)
-        if (message.toLowerCase().includes("error") || message.toLowerCase().includes("extension") || message.toLowerCase().includes("instead") || message.toLowerCase().includes("incorrect") || message.toLowerCase().includes("inactive")) {
+        if (message.toLowerCase().includes("error") || message.toLowerCase().includes("extension") || message.toLowerCase().includes("instead") || message.toLowerCase().includes("incorrect") || message.toLowerCase().includes("inactive") || message.toLowerCase().includes("exist")) {
             icon = "error"; // Change the icon to "error" for error messages
             goodjob = "Oops!"
         }
@@ -79,6 +84,15 @@ window.onload = function () {
         });
     }
 };
+
+function show() {
+  var x = document.getElementById("inputPassword");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
 </script>
 
 
