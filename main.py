@@ -134,12 +134,25 @@ class AuditTrail(db.Model):
     __tablename__ = "audittrail"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', onupdate='CASCADE'))
-    case_id = db.Column(db.Integer, db.ForeignKey('cases.id', onupdate='CASCADE'))
-    action = db.Column(db.String(100))
-    action_date = db.Column(db.Date)
+    case_id = db.Column(db.Integer, db.ForeignKey('cases.id', onupdate='CASCADE'), index=True)
+    action_id = db.Column(db.Integer)  # Change the type to db.Integer
+    action = db.Column(db.String(200))
+    action_date = db.Column(db.DateTime)
 
     def __repr__(self):
-        return f"Document(id={self.id}, case_id={self.case_id})"
+        return f"AuditTrail(id={self.id}, case_id={self.case_id})"
+    # 1 - add case
+    # 2 - edit case
+    # 3 - add document
+    # 4 - schedule
+    # 5 - change status
+    # 6 - activate / deactivate account
+    # 7 - note
+    # 8 - summary
+    # 9 - replace doc
+
+
+
 
 class Notes(db.Model):
     __tablename__ = "notes"
@@ -440,6 +453,10 @@ def add_case():
                     }
 
                     db.session.execute(query2, values2)
+
+                    new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=1, action=path,
+                                            action_date=date_upload)
+                    db.session.add(new_action)
                     # Commit the changes and close the database connection
                     db.session.commit()
                 else:
@@ -464,6 +481,7 @@ def edit_case():
     case_number = request.args.get('case_no')
     case = Cases.query.filter_by(case_no=case_number).first()  # Fetch the case based on case_no
     documents = Document.query.filter_by(case_id=case_number).all()
+    today = datetime.today()
     # Fetch all user
     users = User.query.all()
 
@@ -484,6 +502,10 @@ def edit_case():
                 case.barangay = request.form.get('barangay')
 
                 #
+                new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=2,
+                                        action_date=today)
+                db.session.add(new_action)
+
                 db.session.commit()
                 #
                 #
@@ -561,6 +583,9 @@ def case():
                 }
 
                 db.session.execute(query2, values2)
+                new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=3, action=path,
+                                        action_date=date_upload)
+                db.session.add(new_action)
 
                 # Commit the changes to the database
                 db.session.commit()
@@ -594,6 +619,7 @@ def schedule():
 
     case_number = request.args.get('case_no')
     time_changed = datetime.today()
+    today = datetime.today()
 
     if request.method == 'POST':
         try:
@@ -620,6 +646,10 @@ def schedule():
                 db.session.add(new_schedule)
                 new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status="8")
                 db.session.add(new_status)
+
+            new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=4, action=formatted_schedule_date,
+                                    action_date=today)
+            db.session.add(new_action)
 
             db.session.commit()
             flash("Schedule successfully updated!")
@@ -711,6 +741,10 @@ def status():
                 new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status=status)
                 db.session.add(new_status)
 
+            new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=5, action=status,
+                                    action_date=time_changed)
+            db.session.add(new_action)
+
             db.session.commit()
             flash("Status successfully updated!")
 
@@ -727,7 +761,7 @@ def accounts():
     page = request.args.get('page', 1, type=int)
     page = max(1, page)  # Ensure the page is not less than 1
     per_page = 10  # Number of accounts per page
-
+    today = datetime.now()
     # Get the search term from the query parameters with a default value of an empty string
     search_term = request.args.get('searchUser', '')
 
@@ -755,9 +789,17 @@ def accounts():
             if user.status == "1":
                 user.status = "2"
                 flash("User activated successfully!")
+                new_action = AuditTrail(user_id=current_user.id, action_id=6, action=2,
+                                        action_date=today)
+                db.session.add(new_action)
             elif user.status == "2":
                 user.status = "1"
+                new_action = AuditTrail(user_id=current_user.id, action_id=6, action=1,
+                                        action_date=today)
+                db.session.add(new_action)
                 flash("User deactivated successfully!")
+
+
             db.session.commit()
 
         except Exception as e:
@@ -825,6 +867,10 @@ def note():
                 new_note = Notes(user_id=current_user.id, case_id=case_number, note=note_content, note_date=time_note)
                 db.session.add(new_note)
 
+            new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=7, action=note_content,
+                                    action_date=time_note)
+            db.session.add(new_action)
+
             db.session.commit()
             flash("Note successfully updated!")
 
@@ -858,6 +904,9 @@ def summary():
                 new_summary = Summary(user_id=current_user.id, case_id=case_number, summary=summary_content, summary_date=time_summary)
                 db.session.add(new_summary)
 
+            new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=8, action=summary_content,
+                                    action_date=time_summary)
+            db.session.add(new_action)
             db.session.commit()
             flash("Executive summary successfully updated!")
 
@@ -954,6 +1003,11 @@ def replace_doc():
                 change_doc.file_path = new_document.file_path
                 change_doc.upload_date = formatted_date
                 change_doc.user_id = user_id
+
+                new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=9, action=file_path,
+                                        action_date=formatted_date)
+                db.session.add(new_action)
+
                 db.session.commit()
 
                 flash("File replaced!")
@@ -977,14 +1031,20 @@ def delete_doc():
     documents = Document.query.filter_by(case_id=case_number).all()
     change_doc = Document.query.filter_by(id=doc_id).first()
     users = User.query.all()
+    today = datetime.today()
+    path = change_doc.file_path
 
 
     try:
         if documents and change_doc:
             # Update the file_path attribute in the database
             db.session.delete(change_doc)
-            db.session.commit()
 
+
+            new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=10, action=path,
+                                    action_date=today)
+            db.session.add(new_action)
+            db.session.commit()
             flash("File deleted!")
             return redirect(url_for("case", case_no=case_number))
         else:

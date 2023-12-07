@@ -142,7 +142,7 @@
                             <div class="collapse" id="collapseExample">
                               <div class="card card-body">
                                 <form method="POST" id="Note" enctype="multipart/form-data" action="{{ url_for('note', case_no=case.case_no) }}">
-                                    <textarea class="form-control mb-3" rows="3" name="notes">{{ notes.note }}</textarea>
+                                    <textarea class="form-control mb-3" rows="5" name="notes">{{ notes.note }}</textarea>
                                     <div class = "d-flex justify-content-end">
                                         <button type="submit" class="btn btn-primary">Update</button>
                                     </div>
@@ -168,7 +168,7 @@
                             <div class="collapse" id="collapseSummary">
                               <div class="card card-body">
                                 <form method="POST" id="Summary" enctype="multipart/form-data" action="{{ url_for('summary', case_no=case.case_no) }}">
-                                    <textarea class="form-control mb-3" rows="3" name="summary">{{ summary.summary }}</textarea>
+                                    <textarea class="form-control mb-3" rows="5" name="summary">{{ summary.summary }}</textarea>
                                     <div class = "d-flex justify-content-end">
                                         <button type="submit" class="btn btn-primary">Update</button>
                                     </div>
