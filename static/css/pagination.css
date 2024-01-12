@@ -1,13 +1,49 @@
 /* Change the color of the active page */
-  .pagination .page-item.active .page-link {
+.pagination .page-item.active .page-link {
     background-color: #400c06;
     border-color: #400c06;
     color: white; /* Change text color for better visibility */
-  }
+}
 
-  /* Change the color of the non-active pages */
-  .pagination .page-link {
-    background-color: white; /* Background color for non-active pages */
-    border-color: #400c06; /* Border color for non-active pages */
-    color: #400c06; /* Text color for non-active pages */
-  }
+/* Change the color of the non-active pages */
+.pagination .page-link {
+background-color: white; /* Background color for non-active pages */
+border-color: #400c06; /* Border color for non-active pages */
+color: #400c06; /* Text color for non-active pages */
+}
+
+.uniform-card {
+width: 130px; /* Set your preferred width */
+height: 240px; /* Set your preferred height */
+display: flex;
+flex-direction: column;
+}
+
+.card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card-footer {
+  height: 60px; /* Set your preferred height for the footer */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #400c06; /* Set the background color for the footer */
+  color: white; /* Set the text color for the footer */
+}
+
+.vertical-line {
+    border-right: 1px solid #ccc; /* Adjust the color and width as needed */
+    padding-right: 15px; /* Adjust the padding for spacing */
+    margin-right: 15px; /* Adjust the margin for spacing */
+}
+
+.background-container {
+    background-image: url('/static/img/dashboard-background.png'); /* Set the path to your image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}

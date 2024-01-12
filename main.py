@@ -1,27 +1,25 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, get_flashed_messages, Blueprint
+from flask import Flask, render_template, redirect, url_for, flash
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text, distinct, or_, func
+from sqlalchemy import text, distinct, or_, func, event
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import date, datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from forms import CreatePostForm, RegisterForm, LoginForm, AddCase, AddFile, EditCase, EditStatus, ReplaceFile
+from forms import RegisterForm, LoginForm, AddCase, AddFile, EditCase, EditStatus, ReplaceFile
 from flask_wtf.csrf import generate_csrf
 from flask import request
 import os
 import json
 
 app = Flask(__name__)
-app.register_blueprint
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 ckeditor = CKEditor(app)
 Bootstrap(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
-
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = mysql.connector.connect(
 #     host='localhost',
@@ -87,7 +85,7 @@ class Cases(UserMixin, db.Model):
 class Document(db.Model):
     __tablename__ = "documents"
     id = db.Column(db.Integer, primary_key=True)
-    case_id = db.Column(db.Integer, db.ForeignKey('cases.id', onupdate='CASCADE'))
+    case_id = db.Column(db.Integer, db.ForeignKey('cases.id', onupdate='CASCADE'), index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', onupdate='CASCADE'))
     document_type = db.Column(db.String(50))  # e.g., 'investigation_report', 'position_paper', etc.
     file_path = db.Column(db.String(250))
@@ -188,6 +186,31 @@ with app.app_context():
 # )
 # db.session.add(new_document)
 # db.session.commit()
+
+# Function to create a default administrator user
+def create_default_admin_user(*args, **kwargs):
+    default_password = "admin"
+    hash_and_salted_password = generate_password_hash(
+        default_password,
+        method='pbkdf2:sha256',
+        salt_length=8
+    )
+    admin_user = User(
+        user_lname='Admin',
+        user_fname='Administrator',
+        username='admin',
+        # You should hash the password before saving it to the database
+        password=hash_and_salted_password,
+        type='1',
+        office='City Buildings and Architecture Office',
+        contact='442-2503'
+    )
+    db.session.add(admin_user)
+    db.session.commit()
+
+# Listen for the after_create event to create the default administrator user
+event.listen(User.__table__, 'after_create', create_default_admin_user)
+
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -385,7 +408,7 @@ def add_case():
             try:
                 # Execute the query to insert the case
                 query1 = text(
-                    "INSERT INTO cases (case_no, case_title, case_complainant, address_complainant, contact_complainant, case_respondent, address_respondent, contact_respondent, location, barangay, date_created, status, category) " \
+                    "INSERT INTO cases (case_no, case_title, case_complainant, address_complainant, contact_complainant, case_respondent, address_respondent, contact_respondent, location, barangay, date_created, status, category) "
                     "VALUES (:case_numb, :case_tit, :comp_name, :address_com, :con_complainant, :resp_name, :address_res, :con_respondent, :loc_struct, :barangay_struct, :today, :status, :category)")
                 #
                 case_number = request.form.get('case_no').strip()
@@ -435,7 +458,7 @@ def add_case():
                     new_document = Document(file_path=file_path)
 
                     # Execute the query to insert the document
-                    query2 = text("INSERT INTO documents (case_id, user_id, document_type, file_path, upload_date) " \
+                    query2 = text("INSERT INTO documents (case_id, user_id, document_type, file_path, upload_date) "
                                   "VALUES (:case_id, :user_id, :docu_type, :path_file, :date_of_upload)")
                     #
                     case_id = case_number
@@ -544,9 +567,7 @@ def case():
     ).first()
 
     existing_summary = Summary.query.filter(
-        (Summary.case_id == case_number) &
-        (Summary.user_id == current_user.id)
-    ).first()
+        Summary.case_id == case_number).first()
 
     if form.validate_on_submit():
         try:
@@ -891,9 +912,7 @@ def summary():
 
     if request.method == 'POST':
         existing_summary = Summary.query.filter(
-            (Summary.case_id == case_number) &
-            (Summary.user_id == current_user.id)
-        ).first()
+            Summary.case_id == case_number).first()
         try:
             if existing_summary:
                 # Case with the same case number already exists, update the note
@@ -919,7 +938,7 @@ def summary():
 
     return redirect(url_for('case', case_no=case_number))  # Add the appropriate template for rendering the form
 
-app.route('/demolition_schedule', methods=["GET", "POST"])
+@app.route('/demolition_schedule', methods=["GET", "POST"])
 @login_required
 def demolition_schedule():
 
@@ -1057,6 +1076,7 @@ def delete_doc():
     return render_template("edit_case.html", current_user=current_user, case=case, csrf_token=csrf_token,
                            case_no=case_number, docu=documents, user=users)
 
-
+def reset_password():
+    pass
 if __name__ == "__main__":
     app.run(debug=True)

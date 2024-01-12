@@ -23,25 +23,24 @@
                                     <div class="card-header navbar-brand text-center" style="color: #400c06">
                                         <h5><strong>Hi {{current_user.user_fname}}!</strong></h5>
                                     </div>
-                                    <div class="d-md-flex">
-                                        <div class="col-lg-6 col-md-12 col-sm-12" style="justify-content: center;">
-                                             <h5 class="text-center p-3"><strong>Cases Statistics</strong></h5>
-                                             <div id="piechart">
+                                    <div class="d-md-flex justify-content-between background-container">
+                                      <div class="col-lg-6 col-md-12 col-sm-12 " style="justify-content: center;">
+                                        <h5 class="text-center p-3"><strong>Case Statistics</strong></h5>
+                                        <div id="piechart"></div>
+                                      </div>
 
-                                             </div>
-                                        </div>
-                                        <div class="col-lg-6 col-md-12 col-sm-12 d-none d-md-inline">
-                                            <div class = "col m-3 d-flex justify-content-between">
+                                      <div class="col-lg-6 col-md-12 col-sm-12 d-none d-lg-inline text-center ">
 
-                                            </div>
-                                            <p id="pending" style="display: none">{{ pending }}</p>
-                                            <p id="archived" style="display: none">{{ archived }}</p>
-                                            <p id="dismissed" style="display: none">{{ dismissed }}</p>
-                                            <p id="for_demolition" style="display: none">{{ for_demolition }}</p>
-                                            <p id="demolished" style="display: none">{{ demolished }}</p>
-                                            <p id="deferred" style="display: none">{{ deferred }}</p>
-                                            <p id="for_resolution" style="display: none">{{ for_resolution }}</p>
-                                        </div>
+                                        <h5 class="p-3"><strong>Reminders</strong></h5>
+                                        <p class="p-5">Please be mindful that any information on this website is confidential and should be treated with utmost care. Avoid sharing sensitive details or personal information in public forums. Privacy and security are important to us. <br>Thank you for your cooperation.</p>
+                                        <p id="pending" style="display: none">{{ pending }}</p>
+                                        <p id="archived" style="display: none">{{ archived }}</p>
+                                        <p id="dismissed" style="display: none">{{ dismissed }}</p>
+                                        <p id="for_demolition" style="display: none">{{ for_demolition }}</p>
+                                        <p id="demolished" style="display: none">{{ demolished }}</p>
+                                        <p id="deferred" style="display: none">{{ deferred }}</p>
+                                        <p id="for_resolution" style="display: none">{{ for_resolution }}</p>
+                                      </div>
                                     </div>
                                 </div>
                             </div>
@@ -63,6 +62,7 @@
                         </div>
                     </form>
                     <!--Add Case-->
+                    {% if current_user.type == '1' or current_user.type == '2' %}
                     <div class = "col">
                         <div class="d-flex name justify-content-end">
     <!--                        <button type="button" class="btn btn-labeled btn-warning shadow">-->
@@ -74,6 +74,7 @@
 
                         </div>
                     </div>
+                    {% endif %}
                 </div>
 
                 <!--List of Cases-->
@@ -193,30 +194,6 @@ event.preventDefault();
 
 });
 
-  // Example case data
-var caseData = {
-    "location": "Your Location",
-    "barangay": "36120" // This is the ID you want to look up
-};
-
-<!--// Path to your JSON file-->
-<!--var jsonFilePath = 'path/to/your/baguio_city_barangays.json';-->
-
-<!--// Fetch JSON data from the file-->
-<!--fetch(jsonFilePath)-->
-<!--    .then(response => response.json())-->
-<!--    .then(jsonData => {-->
-<!--        // Check if the case.barangay ID exists in the JSON data-->
-<!--        if (jsonData.hasOwnProperty(caseData.barangay)) {-->
-<!--            // Access the BARANGAY value and use it as needed-->
-<!--            var barangayValue = jsonData[caseData.barangay].BARANGAY;-->
-<!--            console.log('BARANGAY:', barangayValue);-->
-<!--        } else {-->
-<!--            console.log('ID not found in JSON data');-->
-<!--        }-->
-<!--    })-->
-<!--    .catch(error => console.error('Error fetching JSON data:', error));-->
-
 // Load google charts
 google.charts.load('current', { 'packages': ['corechart'] });
 google.charts.setOnLoadCallback(drawChart);
@@ -258,28 +235,30 @@ function drawChart() {
   var containerHeight = containerWidth * 0.7; // You can adjust this aspect ratio as needed
 
   // Set the options for the chart
-  var options = {
-    'width': containerWidth,
-    'height': containerHeight * 0.6,
-    'colors': ['#400c06', '#663d38', '#8c6d6a', '#b39e9b', '#d9cecd', '#ffe69c', '#c0c7ca', '#eacf9a'],
-    'pieHole': 0.4,
-    'legend': {
-        'position': 'right', // Change the position to 'bottom', 'left', 'right', or 'none'
-        'alignment': 'center', // Align the legend to the center
-        'textStyle': {
-            'fontSize': 14, // Change the font size of the legend
-            'fontName': 'Arial, sans-serif' // Change the font family of the legend
-        },
-
-    'chartArea': {
-        'left': '10%', // Left margin
-        'top': '10%',  // Top margin
-        'width': '80%', // Chart width
-        'height': '80%' // Chart height
-      },
+var options = {
+  'width': containerWidth,
+  'height': containerHeight * 0.6,
+  'colors': ['#400c06', '#663d38', '#8c6d6a', '#b39e9b', '#d9cecd', '#ffe69c', '#c0c7ca', '#eacf9a'],
+  'pieHole': 0.4,
+  'legend': {
+    'position': 'right', // Change the position to 'bottom', 'left', 'right', or 'none'
+    'alignment': 'center', // Align the legend to the center
+    'textStyle': {
+      'fontSize': 14, // Change the font size of the legend
+      'fontName': 'Arial, sans-serif' // Change the font family of the legend
     }
-  };
-
+  },
+  'chartArea': {
+    'left': '10%', // Left margin
+    'top': '10%',  // Top margin
+    'width': '80%', // Chart width
+    'height': '80%', // Chart height
+  },
+  'backgroundColor': {
+        fill: '#FF0000',
+        fillOpacity: 0.0
+   }
+};
   // Display the chart inside the <div> element with id="piechart"
   var chart = new google.visualization.PieChart(container);
   chart.draw(data, options);

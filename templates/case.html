@@ -18,11 +18,13 @@
                          <div class="name">
                             <h5 style="color: #fca650">Details</h5>
                         </div>
+                        {% if current_user.type == '1' or current_user.type == '2' %}
                         <div class="name">
                             <a class="btn btn-labeled btn-warning shadow" href="{{ url_for('edit_case', case_no=case.case_no) }}">
                                 <i class="bi bi-pencil-square"></i> <span class="ms-1 d-none d-sm-inline">Edit</span>
                             </a>
                         </div>
+                        {% endif %}
                     </div>
                     <hr>
                     <div class = "d-flex justify-content-between">
@@ -47,9 +49,11 @@
 
                                 {% endif %}
                             </p>
+                        {% if current_user.type == '1' or current_user.type == '2' %}
                         <a data-bs-toggle="modal" data-bs-target="#Status">
                             <i class="bi bi-three-dots"></i>
                         </a>
+                        {% endif %}
                     </div>
                     <hr>
 
@@ -69,7 +73,7 @@
                                 <h5 style="color: red"><strong>Forest Reservation and Greenbelt Area</strong></h5>
                             {% elif case.category == "5" %}
                                 <img src="static/img/river.png" style="width: 120px; height: 120px" class="rounded mx-auto d-block m-3" alt="Barracks Image">
-                                <h5><strong>Watershed</strong></h5>
+                                <h5 style="color: red"><strong>Watershed</strong></h5>
                             {% elif case.category == "6" %}
                                 <img src="static/img/creek.png" style="width: 120px; height: 120px" class="rounded mx-auto d-block m-3" alt="Barracks Image">
                                 <h5 style="color: red"><strong>Esteros and Waterway (Creek Easement)</strong></h5>
@@ -107,11 +111,13 @@
                             </div>
                         </div>
                     </div>
+                    {% if current_user.type == '1' or current_user.type == '2' %}
                     <div class = "d-flex justify-content-center">
                         <a class="btn btn-labeled btn-success shadow" data-bs-toggle="modal" data-bs-target="#Sched">
                                 <i class="bi bi-calendar-event-fill"></i> <span class="ms-1 d-none d-sm-inline">Schedule Deliberation</span>
                         </a>
                     </div>
+                    {% endif %}
     <!--                    <h3>Document</h3>-->
     <!--                    <div class="d-flex justify-content-between px-3">-->
     <!--                        <div class="mr-3">-->
@@ -169,9 +175,11 @@
                               <div class="card card-body">
                                 <form method="POST" id="Summary" enctype="multipart/form-data" action="{{ url_for('summary', case_no=case.case_no) }}">
                                     <textarea class="form-control mb-3" rows="5" name="summary">{{ summary.summary }}</textarea>
+                                    {% if current_user.type == '1' or current_user.type == '2' %}
                                     <div class = "d-flex justify-content-end">
                                         <button type="submit" class="btn btn-primary">Update</button>
                                     </div>
+                                    {% endif %}
                                 </form>
                               </div>
                             </div>
@@ -184,11 +192,13 @@
                                  <div class="name">
                                     <h5 style="color: #fca650">Documents</h5>
                                 </div>
+                                {% if current_user.type == '1' or current_user.type == '2' %}
                                 <div class="name">
                                     <a class="btn btn-labeled btn-warning shadow" data-bs-toggle="modal" data-bs-target="#addDoc">
                                         <i class="fa fa-plus"></i> <span class="ms-1 d-none d-sm-inline">Add Document</span>
                                     </a>
                                 </div>
+                                {% endif %}
                             </div>
                             <hr>
                             <div class="card">
