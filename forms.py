@@ -8,8 +8,20 @@ import json
 with open('templates/baguio_city_barangays.json', 'r') as json_file:
     barangay_choices = json.load(json_file)
 
+# Load the JSON data from the file
+with open('templates/employee.json', 'r') as json_file:
+    employees = json.load(json_file)
+
+# Load the JSON data from the file
+with open('templates/products.json', 'r') as json_file:
+    products = json.load(json_file)
+
 # Extract the "BARANGAY" values from the JSON data
 all_barangay_choices = [(entry["ID"], entry["BARANGAY"]) for entry in barangay_choices]
+# Extract the "Name" values from the JSON data
+all_employees = [(entry["ID"], entry["Name"]) for entry in employees]
+# Extract the "Product" values from the JSON data
+all_products = [(entry["ID"], f"{entry['Product']} - ( {entry['Quantity']} )") for entry in products]
 
 def no_spaces_only(form, field):
     if field.data.strip() == "":
@@ -28,13 +40,13 @@ class RegisterForm(FlaskForm):
     fname = StringField("First Name", validators=[DataRequired(), no_spaces_only])
     mname = StringField("Middle Name", validators=[DataRequired(), no_spaces_only])
     lname = StringField("Last Name", validators=[DataRequired(), no_spaces_only])
-    office = StringField("Office", validators=[DataRequired(), no_spaces_only])
+    division = StringField("Division", validators=[DataRequired(), no_spaces_only])
     contact = StringField("Contact Number", validators=[DataRequired(), no_spaces_only])
     user_type = SelectField("User Type", validators=[DataRequired()], choices=[
         ('', 'Select User Type'),
-        ('1', 'Admin'),
-        ('2', 'Secretariat'),
-        ('3', 'Member')
+        ('1', 'Administrator'),
+        ('2', 'Supply Officer'),
+        ('3', 'Employee')
         # Add more options as needed
     ])
     coerce = str,  # Coerce values to strings
@@ -48,7 +60,7 @@ class LoginForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Login")
 
-class AddCase(FlaskForm):
+class AddEmployee(FlaskForm):
     case_no = StringField("Case Number", validators=[DataRequired(), no_spaces_only])
     case_title = TextAreaField("Case Title", validators=[DataRequired(), no_spaces_only])
     case_category = SelectField("", validators=[DataRequired()], choices=[
@@ -72,7 +84,7 @@ class AddCase(FlaskForm):
     address_respondent = StringField("Address of Respondent", validators=[DataRequired(), no_spaces_only])
     location_of_structure = StringField("Location of Subject Structure", validators=[DataRequired(), no_spaces_only])
     barangay = SelectField("Barangay", validators=[DataRequired()], choices=all_barangay_choices)
-    inves_report = FileField("Investigation Report", validators=[DataRequired()])
+    #inves_report = FileField("Investigation Report", validators=[DataRequired()])
 
 class EditCase(FlaskForm):
     case_no = StringField("Case Number")
@@ -128,6 +140,39 @@ class EditStatus(FlaskForm):
         # Add more options as needed
     ])
     remarks = TextAreaField("Remarks")
+
+class IssueItem(FlaskForm):
+    employee = SelectField("Recipient", validators=[DataRequired()], choices=all_employees)
+    item = SelectField("Item", validators=[DataRequired()], choices=all_products)
+    quantity = StringField("Quantity", validators=[DataRequired(), no_spaces_only])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.item.choices = get_products()  # Load choices dynamically
+
+def get_products():
+    """Load products from JSON file dynamically."""
+    # Load products from JSON file dynamically
+    with open('templates/products.json', 'r') as json_file:
+        products = json.load(json_file)
+
+    # Sort products alphabetically by Product name
+    sorted_products = sorted(products, key=lambda x: x['Product'].lower())
+
+    # Format choices as (ID, "Product - (Quantity)")
+    return [(entry["ID"], f"{entry['Product']}  ( {entry['Quantity']} )") for entry in sorted_products]
+
+class AddExistingItem(FlaskForm):
+    item = SelectField("Item", validators=[DataRequired()], choices=all_products)
+    quantity = StringField("Quantity", validators=[DataRequired(), no_spaces_only])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.item.choices = get_products()  # Load choices dynamically
+
+class AddNewItem(FlaskForm):
+    item = StringField("Item", validators=[DataRequired(), no_spaces_only])
+    quantity = StringField("Quantity", validators=[DataRequired(), no_spaces_only])
 
 class ReplaceFile(FlaskForm):
     files = FileField("File Upload", validators=[DataRequired()])

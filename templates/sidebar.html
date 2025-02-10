@@ -1,12 +1,12 @@
 
 <!--<div class="position-fixed" >-->
-    <div class="profilePic d-none d-md-block mt-5">
-        <img src="static/img/cbao logo copy.png" alt="">
+    <div class="profilePic d-none d-md-block mt-4">
+        <img src="static/img/baguio logo.png" alt="">
     </div>
-    <div class="text-center mt-4 name d-none d-md-block">
-        {{ current_user.user_fname }}
+    <div class="text-center mt-4 name d-none d-md-block text-white">
+        {{ current_user.user_fname | capitalize }}
     </div>
-    <hr class="d-none d-md-block hr" style="width:100%; text-align:left; margin-left:0; color: #400c06; border-top: 5px solid #400c06; background-color: transparent">
+    <hr class="d-none d-md-block hr" style="width:100%; text-align:left; margin-left:0; color: #400c06; border-top: 5px solid #ffffff; background-color: transparent">
 
     <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white">
 
@@ -15,7 +15,7 @@
 
             <li>
                 <a href="{{ url_for('user_dashboard') }}" class="nav-link px-0 align-middle">
-                    <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">Dashboard</span>
+                    <i class="fs-4 bi-speedometer2 text-white"></i> <span class="ms-1 d-none d-sm-inline text-white">Dashboard</span>
                 </a>
 <!--                        <ul class="collapse nav flex-column ms-1" id="submenu1">-->
 <!--                            <li class="w-100">-->
@@ -28,18 +28,18 @@
             </li>
             <li>
                 <a href="{{ url_for('scheduled') }}" class="nav-link px-0 align-middle">
-                    <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Scheduled</span></a>
+                    <i class="fs-4 bi-table text-white"></i> <span class="ms-1 d-none d-sm-inline text-white">Scheduled</span></a>
             </li>
             {% if current_user.type == '1' or current_user.type == '2' %}
             <li>
                 <a href="{{ url_for('for_scheduling') }}" class="nav-link px-0 align-middle">
-                    <i class="fs-4 bi-grid"></i> <span class="ms-1 d-none d-sm-inline">For Scheduling</span></a>
+                    <i class="fs-4 bi-grid text-white"></i> <span class="ms-1 d-none d-sm-inline text-white">For Scheduling</span></a>
             </li>
             {% endif %}
             {% if current_user.type == '1' %}
             <li>
                 <a href="{{ url_for('accounts') }}" class="nav-link px-0 align-middle ">
-                    <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Accounts</span></a>
+                    <i class="fs-4 bi-people text-white"></i> <span class="ms-1 d-none d-sm-inline text-white">Accounts</span></a>
             </li>
             {% endif %}
 <!--            <li>-->
@@ -62,7 +62,7 @@
 <!--            </li>-->
             <li>
                 <a href="{{ url_for('logout') }}" class="nav-link px-0 align-middle">
-                    <i class="fs-4 bi-box-arrow-right"></i> <span class="ms-1 d-none d-sm-inline">Logout</span> </a>
+                    <i class="fs-4 bi-box-arrow-right text-white"></i> <span class="ms-1 d-none d-sm-inline text-white">Logout</span> </a>
             </li>
         </ul>
     </div>

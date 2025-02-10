@@ -8,11 +8,14 @@ from datetime import date, datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from forms import RegisterForm, LoginForm, AddCase, AddFile, EditCase, EditStatus, ReplaceFile
+from forms import RegisterForm, LoginForm, AddEmployee, AddFile, EditCase, EditStatus, ReplaceFile, IssueItem, AddNewItem, AddExistingItem
 from flask_wtf.csrf import generate_csrf
 from flask import request
 import os
 import json
+from AddExistingItem import addexistingitem
+from AddNewItem import addnewitem
+from IssueItem import issueitem
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -29,6 +32,7 @@ login_manager.init_app(app)
 #     database='docu_track'
 # )
 #mysql_db_cursor = db.cursor()
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:baguioCAISC2023**@localhost/document_track'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/document_track'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -39,6 +43,9 @@ UPLOAD_FOLDER = 'static/documents'
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'doc', 'jpg', 'png', 'gif', 'bmp', 'jpeg', 'mp3', 'wav', 'ogg', 'flac'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Define the path to your JSON file
+JSON_FILE_PATH_PRODUCTS = 'templates/products.json'
 
 ##CREATE TABLE IN USER DB
 class User(UserMixin, db.Model):
@@ -52,12 +59,64 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(100))
     status = db.Column(db.String(20))
     type = db.Column(db.String(20))
-    office = db.Column(db.String(100))
+    division = db.Column(db.String(100))
     contact = db.Column(db.String(100))
 
     def get_id(self):
         return str(self.id)
 
+# Function to create admin user if none exists
+# def create_admin_user():
+#     admin = User.query.filter_by(username='admin').first()  # Check if admin already exists
+#     if not admin:
+#         admin = User(
+#             user_lname='Admin',
+#             user_fname='Admin',
+#             user_mname='',
+#             date_created=datetime.today().date(),
+#             username='admin',
+#             password=generate_password_hash('adminpassword'),  # Use a hashed password
+#             status='active',
+#             type='admin',
+#             office='Main Office',
+#             contact='1234567890'
+#         )
+#         db.session.add(admin)
+#         db.session.commit()
+#         print("Admin user created!")
+#     else:
+#         print("Admin user already exists!")
+
+# Function to create a default administrator user
+def create_default_admin_user(*args, **kwargs):
+
+    # Check if the admin user already exists
+    admin_exists = User.query.filter_by(username='admin').first()
+
+    if admin_exists:
+        print("Admin user already exists. No new admin will be created.")
+        return  # Exit the function early if admin already exists
+
+    # Admin user doesn't exist, create a new one
+    default_password = "admin"
+    hash_and_salted_password = generate_password_hash(
+        default_password,
+        method='pbkdf2:sha256',
+        salt_length=8
+    )
+
+    admin_user = User(
+        user_lname='Admin',
+        user_fname='Administrator',
+        username='admin',
+        password=hash_and_salted_password,
+        type='1',
+        office='City Treasury Office',
+        contact='442-8900'
+    )
+    db.session.add(admin_user)
+    db.session.commit()
+    print("Admin user created!")
 
 ##CREATE TABLE IN cases DB
 class Cases(UserMixin, db.Model):
@@ -150,8 +209,6 @@ class AuditTrail(db.Model):
     # 9 - replace doc
 
 
-
-
 class Notes(db.Model):
     __tablename__ = "notes"
     id = db.Column(db.Integer, primary_key=True)
@@ -170,6 +227,7 @@ class Summary(db.Model):
 
 with app.app_context():
     db.create_all()
+    create_default_admin_user()  # Create admin user if none exists
     print("success DB")
 
 #--reference on retrieving documents for a specific case
@@ -187,29 +245,37 @@ with app.app_context():
 # db.session.add(new_document)
 # db.session.commit()
 
-# Function to create a default administrator user
-def create_default_admin_user(*args, **kwargs):
-    default_password = "admin"
-    hash_and_salted_password = generate_password_hash(
-        default_password,
-        method='pbkdf2:sha256',
-        salt_length=8
-    )
-    admin_user = User(
-        user_lname='Admin',
-        user_fname='Administrator',
-        username='admin',
-        # You should hash the password before saving it to the database
-        password=hash_and_salted_password,
-        type='1',
-        office='City Buildings and Architecture Office',
-        contact='442-2503'
-    )
-    db.session.add(admin_user)
-    db.session.commit()
-
-# Listen for the after_create event to create the default administrator user
-event.listen(User.__table__, 'after_create', create_default_admin_user)
+# def create_default_admin_user(*args, **kwargs):
+#     # Check if the default admin user already exists
+#     existing_user = User.query.filter_by(username='admin').first()
+#
+#     # If the user doesn't exist, create it
+#     if not existing_user:
+#         default_password = "admin"
+#         hash_and_salted_password = generate_password_hash(
+#             default_password,
+#             method='pbkdf2:sha256',
+#             salt_length=8
+#         )
+#         admin_user = User(
+#             user_lname='Admin',
+#             user_fname='Administrator',
+#             username='admin',
+#             # You should hash the password before saving it to the database
+#             password=hash_and_salted_password,
+#             type='1',
+#             office='City Buildings and Architecture Office',
+#             contact='442-2503'
+#         )
+#         db.session.add(admin_user)
+#         db.session.commit()
+#         print("Default admin user created successfully.")
+#     else:
+#         print("Default admin user already exists.")
+#
+#
+# # Call the function to check and create the default admin user
+# create_default_admin_user()
 
 @login_manager.user_loader
 def load_user(id):
@@ -245,13 +311,13 @@ def register():
                     salt_length=8
                 )
                 # Execute the query to insert the user
-                query = text("INSERT INTO user (user_lname, user_fname, user_mname, office, contact, status, type, date_created, username, password) "
-                             "VALUES (:lname, :fname, :mname, :office, :contact, :status, :user_type, :today, :username, :password)")
+                query = text("INSERT INTO user (user_lname, user_fname, user_mname, division, contact, status, type, date_created, username, password) "
+                             "VALUES (:lname, :fname, :mname, :division, :contact, :status, :user_type, :today, :username, :password)")
 
                 last_name = request.form.get('lname')
                 first_name = request.form.get('fname')
                 middle_name = request.form.get('mname')
-                office_add = request.form.get('office')
+                division_add = request.form.get('division')
                 contact_num = request.form.get('contact')
                 stat = "1"
                 usertype = request.form.get('user_type')
@@ -261,7 +327,7 @@ def register():
                     'lname': last_name,
                     'fname': first_name,
                     'mname': middle_name,
-                    'office': office_add,
+                    'division': division_add,
                     'contact': contact_num,
                     'status': stat,
                     'user_type': usertype,
@@ -334,6 +400,10 @@ def custom_pagination(current_page, total_pages, max_display):
 @app.route('/dashboard', methods=["GET", "POST"])
 @login_required
 def user_dashboard():
+    form = IssueItem()
+    form1 = AddExistingItem()
+    form2 = AddNewItem()
+    csrf_token = generate_csrf()
     page = request.args.get('page', 1, type=int)
     per_page = 5  # Number of cases per page
 
@@ -383,29 +453,134 @@ def user_dashboard():
                            pagination_range=pagination_range, for_deliberation=for_deliberation,
                            search_term=search_term, reset_search_url=reset_search_url, get_barangay_name=get_barangay_name,
                            pending=pending, archived=archived, dismissed=dismissed, for_demolition=for_demolition, demolished=demolished,
-                           deferred=deferred, for_resolution=for_resolution)
+                           deferred=deferred, for_resolution=for_resolution, form=form, form1=form1, form2=form2, csrf_token=csrf_token)
 
 
+# @app.route('/AddCase', methods=["GET", "POST"])
+# @login_required
+# def add_case():
+#     form = AddCase()
+#     csrf_token = generate_csrf()
+#
+#     if form.validate_on_submit():
+#
+#         # Execute the query
+#         query = text("SELECT * FROM cases WHERE case_no = :case_num")
+#         case_num = request.form.get('case_no')
+#         # Fetch the result
+#         result = db.session.execute(query, {'case_num': case_num}).fetchone()
+#
+#         # Return True if the username exists, False otherwise
+#         if result:
+#             flash("This case number already exists. Please provide a unique number.")
+#             return redirect(url_for('add_case'))
+#         else:
+#             try:
+#                 # Execute the query to insert the case
+#                 query1 = text(
+#                     "INSERT INTO cases (case_no, case_title, case_complainant, address_complainant, contact_complainant, case_respondent, address_respondent, contact_respondent, location, barangay, date_created, status, category) "
+#                     "VALUES (:case_numb, :case_tit, :comp_name, :address_com, :con_complainant, :resp_name, :address_res, :con_respondent, :loc_struct, :barangay_struct, :today, :status, :category)")
+#                 #
+#                 case_number = request.form.get('case_no').strip()
+#                 title = request.form.get('case_title').strip()
+#                 com_name = request.form.get('complainant_name').strip()
+#                 add_comp = request.form.get('address_complainant').strip()
+#                 con_comp = request.form.get('contact_complainant').strip()
+#                 res_name = request.form.get('respondent_name').strip()
+#                 add_res = request.form.get('address_respondent').strip()
+#                 con_res = request.form.get('contact_respondent').strip()
+#                 struct_loc = request.form.get('location_of_structure').strip()
+#                 brgy = form.barangay.data
+#                 categ = form.case_category.data
+#                 today = datetime.today()
+#                 formatted_date = today.strftime('%Y-%m-%dT%H:%M:%S')
+#                 case_stat = "1"
+#
+#                 values = {
+#                     'case_numb': case_number,
+#                     'case_tit': title,
+#                     'comp_name': com_name,
+#                     'address_com': add_comp,
+#                     'con_complainant': con_comp,
+#                     'resp_name': res_name,
+#                     'address_res': add_res,
+#                     'con_respondent': con_res,
+#                     'loc_struct': struct_loc,
+#                     'barangay_struct': brgy,
+#                     'today': formatted_date,
+#                     'status': case_stat,
+#                     'category': categ
+#                 }
+#                 db.session.execute(query1, values)
+#                 # Commit the changes and close the database connection
+#                 db.session.commit()
+#
+#                 # Upload file and file path
+#                 uploaded_file = form.inves_report.data
+#                 if uploaded_file.filename != '' and allowed_file(uploaded_file.filename):
+#                     current_time = datetime.now().strftime("%Y%m%d%H%M%S")
+#                     filename = secure_filename(uploaded_file.filename)
+#                     unique_filename = f"{current_time}_{filename}"
+#
+#                     file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+#                     uploaded_file.save(file_path)
+#
+#                     new_document = Document(file_path=file_path)
+#
+#                     # Execute the query to insert the document
+#                     query2 = text("INSERT INTO documents (case_id, user_id, document_type, file_path, upload_date) "
+#                                   "VALUES (:case_id, :user_id, :docu_type, :path_file, :date_of_upload)")
+#                     #
+#                     case_id = case_number
+#                     user_id = current_user.id
+#                     doc_type = "1"
+#                     path = new_document.file_path  # Get the file path from the new_document object
+#                     date_upload = datetime.today()
+#
+#                     values2 = {
+#                         'case_id': case_id,
+#                         'user_id': user_id,
+#                         'docu_type': doc_type,
+#                         'path_file': path,
+#                         'date_of_upload': date_upload,
+#                     }
+#
+#                     db.session.execute(query2, values2)
+#
+#                     new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=1, action=path,
+#                                             action_date=date_upload)
+#                     db.session.add(new_action)
+#                     # Commit the changes and close the database connection
+#                     db.session.commit()
+#                 else:
+#                     flash("File extension not valid")
+#                     return redirect(url_for('add_case'))
+#                     db.session.rollback()  # Rollback the transaction
+#             except Exception as e:
+#                 flash(f"An error occurred while saving the case and document: {str(e)}")
+#                 db.session.rollback()   # Rollback the transaction if an exception occurs
+#
+#         flash("Case saved!")
+#         return redirect(url_for('add_case'))
+#
+#     return render_template("add_case.html", current_user=current_user, form=form, csrf_token=csrf_token)
 @app.route('/AddCase', methods=["GET", "POST"])
 @login_required
 def add_case():
-    form = AddCase()
+    form = AddEmployee()
     csrf_token = generate_csrf()
 
     if form.validate_on_submit():
+        try:
+            # Execute the query to check if the case exists
+            query = text("SELECT * FROM cases WHERE case_no = :case_num")
+            case_num = request.form.get('case_no')
+            result = db.session.execute(query, {'case_num': case_num}).fetchone()
 
-        # Execute the query
-        query = text("SELECT * FROM cases WHERE case_no = :case_num")
-        case_num = request.form.get('case_no')
-        # Fetch the result
-        result = db.session.execute(query, {'case_num': case_num}).fetchone()
-
-        # Return True if the username exists, False otherwise
-        if result:
-            flash("This case number already exists. Please provide a unique number.")
-            return redirect(url_for('add_case'))
-        else:
-            try:
+            if result:
+                flash("This case number already exists. Please provide a unique number.")
+                return redirect(url_for('add_case'))
+            else:
                 # Execute the query to insert the case
                 query1 = text(
                     "INSERT INTO cases (case_no, case_title, case_complainant, address_complainant, contact_complainant, case_respondent, address_respondent, contact_respondent, location, barangay, date_created, status, category) "
@@ -441,59 +616,68 @@ def add_case():
                     'status': case_stat,
                     'category': categ
                 }
+
                 db.session.execute(query1, values)
-                # Commit the changes and close the database connection
+                # Commit the changes to save the case information
                 db.session.commit()
 
-                # Upload file and file path
-                uploaded_file = form.inves_report.data
-                if uploaded_file.filename != '' and allowed_file(uploaded_file.filename):
-                    current_time = datetime.now().strftime("%Y%m%d%H%M%S")
-                    filename = secure_filename(uploaded_file.filename)
-                    unique_filename = f"{current_time}_{filename}"
+                # After successfully saving the case, proceed to save the documents
+                #save_documents(case_number)
 
-                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-                    uploaded_file.save(file_path)
-
-                    new_document = Document(file_path=file_path)
-
-                    # Execute the query to insert the document
-                    query2 = text("INSERT INTO documents (case_id, user_id, document_type, file_path, upload_date) "
-                                  "VALUES (:case_id, :user_id, :docu_type, :path_file, :date_of_upload)")
-                    #
-                    case_id = case_number
-                    user_id = current_user.id
-                    doc_type = "1"
-                    path = new_document.file_path  # Get the file path from the new_document object
-                    date_upload = datetime.today()
-
-                    values2 = {
-                        'case_id': case_id,
-                        'user_id': user_id,
-                        'docu_type': doc_type,
-                        'path_file': path,
-                        'date_of_upload': date_upload,
-                    }
-
-                    db.session.execute(query2, values2)
-
-                    new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=1, action=path,
-                                            action_date=date_upload)
-                    db.session.add(new_action)
-                    # Commit the changes and close the database connection
-                    db.session.commit()
-                else:
-                    flash("File extension not valid")
-                    return redirect(url_for('add_case'))
-                    db.session.rollback()  # Rollback the transaction
-            except Exception as e:
-                flash(f"An error occurred while saving the case and document: {str(e)}")
-                db.session.rollback()   # Rollback the transaction if an exception occurs
-
-        flash("Case saved!")
-        return redirect(url_for('add_case'))
+                flash("Case saved!")
+                return redirect(url_for('add_case'))
+        except Exception as e:
+            flash(f"An error occurred while saving the case: {str(e)}")
+            db.session.rollback()  # Rollback the transaction if an exception occurs
 
     return render_template("add_case.html", current_user=current_user, form=form, csrf_token=csrf_token)
+
+def save_documents(case_number):
+    # Logic to save documents associated with the given case number
+    # Upload file and file path
+    form = AddEmployee()
+    uploaded_file = form.inves_report.data
+    if uploaded_file.filename != '' and allowed_file(uploaded_file.filename):
+        current_time = datetime.now().strftime("%Y%m%d%H%M%S")
+        filename = secure_filename(uploaded_file.filename)
+        unique_filename = f"{current_time}_{filename}"
+
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+        uploaded_file.save(file_path)
+
+        new_document = Document(file_path=file_path)
+
+        # Execute the query to insert the document
+        query2 = text("INSERT INTO documents (case_id, user_id, document_type, file_path, upload_date) "
+                      "VALUES (:case_id, :user_id, :docu_type, :path_file, :date_of_upload)")
+        #
+        user_id = current_user.id
+        doc_type = "1"
+        path = new_document.file_path  # Get the file path from the new_document object
+        date_upload = datetime.today()
+
+        values2 = {
+            'user_id': user_id,
+            'docu_type': doc_type,
+            'path_file': path,
+            'date_of_upload': date_upload,
+        }
+
+        result = db.session.execute(query2, values2)
+
+        # Retrieve the auto-generated case_id
+        case_id = result.lastrowid
+
+        new_action = AuditTrail(user_id=current_user.id, case_id=case_id, action_id=1, action=path,
+                                action_date=date_upload)
+        db.session.add(new_action)
+        # Commit the changes and close the database connection
+        db.session.commit()
+    else:
+        flash("File extension not valid")
+        return redirect(url_for('add_case'))
+
+
 
 @app.route('/EditCase', methods=["GET", "POST"])
 @login_required
@@ -502,7 +686,7 @@ def edit_case():
     replace = ReplaceFile()
     csrf_token = generate_csrf()
     case_number = request.args.get('case_no')
-    case = Cases.query.filter_by(case_no=case_number).first()  # Fetch the case based on case_no
+    case = Cases.query.filter_by(id=case_number).first()  # Fetch the case based on case_no
     documents = Document.query.filter_by(case_id=case_number).all()
     today = datetime.today()
     # Fetch all user
@@ -523,9 +707,9 @@ def edit_case():
                 case.contact_respondent = request.form.get('contact_respondent').strip()
                 case.location = request.form.get('location_of_structure').strip()
                 case.barangay = request.form.get('barangay')
-
+                case_id = case.id
                 #
-                new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=2,
+                new_action = AuditTrail(user_id=current_user.id, case_id=case_id, action_id=2,
                                         action_date=today)
                 db.session.add(new_action)
 
@@ -552,7 +736,7 @@ def case():
     # form2 = Schedule()
     csrf_token = generate_csrf()
     case_number = request.args.get('case_no')
-    case = Cases.query.filter_by(case_no=case_number).first()  # Fetch the case based on case_no
+    case = Cases.query.filter_by(id=case_number).first()  # Fetch the case based on case_no
     # Fetch all documents for the specified case
     documents = Document.query.filter_by(case_id=case_number).all()
     # Fetch all user
@@ -589,14 +773,13 @@ def case():
                 query2 = text("INSERT INTO documents (case_id, user_id, document_type, file_path, upload_date) "
                               "VALUES (:case_id, :user_id, :docu_type, :path_file, :date_of_upload)")
                 #
-                case_id = case_number
                 user_id = current_user.id
                 doc_type = docum_type
                 path = new_document.file_path  # Get the file path from the new_document object
                 date_upload = datetime.today()
 
                 values2 = {
-                    'case_id': case_id,
+                    'case_id': case.id,
                     'user_id': user_id,
                     'docu_type': doc_type,
                     'path_file': path,
@@ -604,7 +787,7 @@ def case():
                 }
 
                 db.session.execute(query2, values2)
-                new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=3, action=path,
+                new_action = AuditTrail(user_id=current_user.id, case_id=case.id, action_id=3, action=path,
                                         action_date=date_upload)
                 db.session.add(new_action)
 
@@ -612,16 +795,16 @@ def case():
                 db.session.commit()
 
                 flash("File saved successfully!")  # Flash a success message
-                return redirect(url_for('case', case_no=case_number))  # Redirect back to the page with the updated content
+                return redirect(url_for('case', case_no=case.id))  # Redirect back to the page with the updated content
             else:
                 flash("File extension not valid")
-                return redirect(url_for('case', case_no=case_number))
+                return redirect(url_for('case', case_no=case.id))
 
         except Exception as e:
             # An exception occurred during the commit
             db.session.rollback()  # Rollback the transaction
             flash("Error saving file. Please try again later.")  # Flash an error message
-            return redirect(url_for('case', case_no=case_number))
+            return redirect(url_for('case', case_id=case.id))
     return render_template("case.html",
                            case=case,
                            docu=documents,
@@ -639,6 +822,7 @@ def case():
 def schedule():
 
     case_number = request.args.get('case_no')
+    case = Cases.query.filter_by(id=case_number).first()  # Fetch the case based on case_no
     time_changed = datetime.today()
     today = datetime.today()
 
@@ -650,7 +834,7 @@ def schedule():
             formatted_schedule_date = schedule_date_obj.strftime('%Y-%m-%d')
 
             existing_schedule = Schedule.query.filter_by(case_id=case_number).first()
-            update_status = Cases.query.filter_by(case_no=case_number).first()
+            update_status = Cases.query.filter_by(id=case_number).first()
 
             if existing_schedule:
                 # Case with the same case number already exists, update the schedule
@@ -665,7 +849,7 @@ def schedule():
                 new_schedule = Schedule(case_id=case_number, schedule=formatted_schedule_date, remarks=remarks)
                 update_status.status = "8"
                 db.session.add(new_schedule)
-                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status="8")
+                new_status = Status(case_id=case.id, remarks=remarks, status_date=time_changed, status="8")
                 db.session.add(new_status)
 
             new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=4, action=formatted_schedule_date,
@@ -717,7 +901,8 @@ def scheduled():
                            schedule_date=unique_schedule,
                            all_schedule = all_schedule,
                            all_case = all_case,
-                           get_title=get_title)
+                           get_title=get_title,
+                           get_number=get_number)
 
 def get_barangay_name(id):
     # Load the JSON data from the file
@@ -734,35 +919,43 @@ def get_barangay_name(id):
 
 def get_title(id):
     case_number = id
-    case = Cases.query.filter_by(case_no=case_number).first()  # Fetch the case based on case_no
+    case = Cases.query.filter_by(id=case_number).first()  # Fetch the case based on case_no
     case_title = case.case_title
 
     return case_title
+
+def get_number(id):
+    case_number = id
+    case = Cases.query.filter_by(id=case_number).first()  # Fetch the case based on case_no
+    number = case.case_no
+
+    return number
 
 @app.route('/change_status', methods=["GET", "POST"])
 @login_required
 def status():
 
     case_number = request.args.get('case_no')
+    case = Cases.query.filter_by(id=case_number).first()  # Fetch the case based on case_no
 
     if request.method == 'POST':
         status = request.form['status']  # Access the date picker value from the form data
         remarks = request.form['remarks']
         time_changed = datetime.today()
         try:
-            case = Cases.query.filter_by(case_no=case_number).first()
+            case = Cases.query.filter_by(id=case_number).first()
             if case.status == "8":
-                delete_case = Schedule.query.filter_by(case_id=case_number).first()
+                delete_case = Schedule.query.filter_by(case_id=case.id).first()
                 db.session.delete(delete_case)
                 case.status = status
-                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status=status)
+                new_status = Status(case_id=case.id, remarks=remarks, status_date=time_changed, status=status)
                 db.session.add(new_status)
             else:
                 case.status = status
-                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status=status)
+                new_status = Status(case_id=case.id, remarks=remarks, status_date=time_changed, status=status)
                 db.session.add(new_status)
 
-            new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=5, action=status,
+            new_action = AuditTrail(user_id=current_user.id, case_id=case.id, action_id=5, action=status,
                                     action_date=time_changed)
             db.session.add(new_action)
 
@@ -872,6 +1065,7 @@ def note():
     case_number = request.args.get('case_no')
     time_note = datetime.now()
     note_content = request.form.get('notes')
+    case = Cases.query.filter_by(id=case_number).first()  # Fetch the case based on case_no
 
     if request.method == 'POST':
         existing_note = Notes.query.filter(
@@ -885,10 +1079,10 @@ def note():
                 existing_note.note_date = time_note
             else:
                 # Case with the case number doesn't exist, add a new note
-                new_note = Notes(user_id=current_user.id, case_id=case_number, note=note_content, note_date=time_note)
+                new_note = Notes(user_id=current_user.id, case_id=case.id, note=note_content, note_date=time_note)
                 db.session.add(new_note)
 
-            new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=7, action=note_content,
+            new_action = AuditTrail(user_id=current_user.id, case_id=case.id, action_id=7, action=note_content,
                                     action_date=time_note)
             db.session.add(new_action)
 
@@ -909,10 +1103,11 @@ def summary():
     case_number = request.args.get('case_no')
     time_summary = datetime.now()
     summary_content = request.form.get('summary')
+    case = Cases.query.filter_by(id=case_number).first()  # Fetch the case based on case_no
 
     if request.method == 'POST':
         existing_summary = Summary.query.filter(
-            Summary.case_id == case_number).first()
+            Summary.case_id == case.id).first()
         try:
             if existing_summary:
                 # Case with the same case number already exists, update the note
@@ -920,10 +1115,10 @@ def summary():
                 existing_summary.summary_date = time_summary
             else:
                 # Case with the case number doesn't exist, add a new note
-                new_summary = Summary(user_id=current_user.id, case_id=case_number, summary=summary_content, summary_date=time_summary)
+                new_summary = Summary(user_id=current_user.id, case_id=case.id, summary=summary_content, summary_date=time_summary)
                 db.session.add(new_summary)
 
-            new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=8, action=summary_content,
+            new_action = AuditTrail(user_id=current_user.id, case_id=case.id, action_id=8, action=summary_content,
                                     action_date=time_summary)
             db.session.add(new_action)
             db.session.commit()
@@ -944,6 +1139,7 @@ def demolition_schedule():
 
     case_number = request.args.get('case_no')
     time_changed = datetime.today()
+    case = Cases.query.filter_by(case_no=case_number).first()  # Fetch the case based on case_no
 
     if request.method == 'POST':
         try:
@@ -952,7 +1148,7 @@ def demolition_schedule():
             schedule_date_obj = datetime.strptime(schedule_date, '%m/%d/%Y')
             formatted_schedule_date = schedule_date_obj.strftime('%Y-%m-%d')
 
-            existing_schedule = Schedule.query.filter_by(case_id=case_number).first()
+            existing_schedule = Schedule.query.filter_by(case_id=case.id).first()
             update_status = Cases.query.filter_by(case_no=case_number).first()
 
             if existing_schedule:
@@ -961,14 +1157,14 @@ def demolition_schedule():
                 existing_schedule.remarks = remarks
                 #existing_schedule.case_title = update_status.case_title
                 update_status.status = "8"
-                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status="8")
+                new_status = Status(case_id=case.id, remarks=remarks, status_date=time_changed, status="8")
                 db.session.add(new_status)
             else:
                 # Case with the case number doesn't exist, add a new row
-                new_schedule = Schedule(case_id=case_number, schedule=formatted_schedule_date, remarks=remarks)
+                new_schedule = Schedule(case_id=case.id, schedule=formatted_schedule_date, remarks=remarks)
                 update_status.status = "8"
                 db.session.add(new_schedule)
-                new_status = Status(case_id=case_number, remarks=remarks, status_date=time_changed, status="8")
+                new_status = Status(case_id=case.id, remarks=remarks, status_date=time_changed, status="8")
                 db.session.add(new_status)
 
             db.session.commit()
@@ -1023,7 +1219,7 @@ def replace_doc():
                 change_doc.upload_date = formatted_date
                 change_doc.user_id = user_id
 
-                new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=9, action=file_path,
+                new_action = AuditTrail(user_id=current_user.id, case_id=case.id, action_id=9, action=file_path,
                                         action_date=formatted_date)
                 db.session.add(new_action)
 
@@ -1047,7 +1243,7 @@ def delete_doc():
     case_number = request.args.get('case_no')
     case = Cases.query.filter_by(case_no=case_number).first()  # Fetch the case based on case_no
     doc_id = request.form.get('dociddelete')
-    documents = Document.query.filter_by(case_id=case_number).all()
+    documents = Document.query.filter_by(case_id=case.id).all()
     change_doc = Document.query.filter_by(id=doc_id).first()
     users = User.query.all()
     today = datetime.today()
@@ -1060,7 +1256,7 @@ def delete_doc():
             db.session.delete(change_doc)
 
 
-            new_action = AuditTrail(user_id=current_user.id, case_id=case_number, action_id=10, action=path,
+            new_action = AuditTrail(user_id=current_user.id, case_id=case.id, action_id=10, action=path,
                                     action_date=today)
             db.session.add(new_action)
             db.session.commit()
@@ -1076,7 +1272,19 @@ def delete_doc():
     return render_template("edit_case.html", current_user=current_user, case=case, csrf_token=csrf_token,
                            case_no=case_number, docu=documents, user=users)
 
+@app.route('/add-to-existing-items', methods=["GET", "POST"])
+def add_existing_item():
+    return addexistingitem()
+
+@app.route('/add-new-items', methods=["GET", "POST"])
+def add_new_item():
+    return addnewitem()
+
+@app.route('/issue-items', methods=["GET", "POST"])
+def issue_item():
+    return issueitem()
+
 def reset_password():
     pass
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)

@@ -3,13 +3,13 @@
 {% include "header_test.html" %}
 <div class="container-fluid">
     <div class="row flex-nowrap">
-        <div class="col-xl-2 col-lg-2 col-md-3 col-2 bg-light shadow min-vh-100 position-fixed d-inline-block">
+        <div class="col-xl-2 col-lg-2 col-md-3 col-2 bg-dark shadow min-vh-100 position-fixed d-inline-block">
             {% include "sidebar.html" %}
         </div>
         <div class="col-xl-10 col-lg-10 col-md-9 col-10 offset-xl-2 offset-lg-2 offset-md-3 offset-2">
             <div class="py-3 px-lg-3 px-md-2 px-sm-2 px-xs-2" >
                 <div class="col-auto px-sm-3 px-0 bg-light shadow p-2 rounded mb-3">
-                    <h3>Add Case</h3>
+                    <h3>Add Employee</h3>
 
                         <form method="POST" id="myForm" enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
@@ -145,14 +145,14 @@
                                         {% endif %}
                                     {% endfor %}
                                 </div>
-                                {% for field in form %}
-                                    {% if field.name == 'inves_report' %}
-                                    <div class="mb-3 px-2">
-                                      <label for="InvesRep" class="form-label">Upload Investigation Report</label>
-                                      <input class="form-control" type="file" id="InvesRep" name="{{ field.name }}" required="True">
-                                    </div>
-                                    {% endif %}
-                                {% endfor %}
+<!--                                {% for field in form %}-->
+<!--                                    {% if field.name == 'inves_report' %}-->
+<!--                                    <div class="mb-3 px-2">-->
+<!--                                      <label for="InvesRep" class="form-label">Upload Investigation Report</label>-->
+<!--                                      <input class="form-control" type="file" id="InvesRep" name="{{ field.name }}" required="True">-->
+<!--                                    </div>-->
+<!--                                    {% endif %}-->
+<!--                                {% endfor %}-->
                             <div class="d-flex name justify-content-end">
                                 <button type="submit" class="btn btn-warning">Save</button>
                             </div>

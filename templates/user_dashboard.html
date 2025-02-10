@@ -11,44 +11,274 @@
 
 <div class="container-fluid">
     <div class="row flex-nowrap">
-        <div class="col-xl-2 col-lg-2 col-md-3 col-2 bg-light shadow min-vh-100 position-fixed d-inline-block">
+        <div class="col-xl-2 col-lg-2 col-md-3 col-2 bg-dark shadow min-vh-100 position-fixed d-inline-block">
             {% include "sidebar.html" %}
         </div>
         <div class="col-xl-10 col-lg-10 col-md-9 col-10 offset-xl-2 offset-lg-2 offset-md-3 offset-2">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="mb-3 mt-3">
-                            <div class="card">
-                                <div class="col">
-                                    <div class="card-header navbar-brand text-center" style="color: #400c06">
-                                        <h5><strong>Hi {{current_user.user_fname}}!</strong></h5>
+            <div class="container-fluid">
+                <div class="mb-1 mt-4">
+                        <div class="card">
+                            <div class="col">
+                                <div class="card-header navbar-brand text-center" style="color: #400c06">
+                                    <h5><strong>Hi {{current_user.user_fname}}!</strong></h5>
+                                </div>
+<!--                                    <div class="d-md-flex justify-content-between">-->
+<!--                                      <div class="col-lg-6 col-md-12 col-sm-12 " style="justify-content: center;">-->
+<!--                                        <h5 class="text-center p-3"><strong>Utilization Rate</strong></h5>-->
+<!--                                        <div id="piechart"></div>-->
+<!--                                      </div>-->
+
+<!--                                      <div class="col-lg-6 col-md-12 col-sm-12 d-none d-lg-inline text-center ">-->
+
+<!--                                        <h5 class="p-3"><strong>Reminders</strong></h5>-->
+<!--                                        <p class="p-5">Please be mindful that any information on this website is confidential and should be treated with utmost care. Avoid sharing sensitive details or personal information in public forums. Privacy and security are important to us. <br>Thank you for your cooperation.</p>-->
+<!--                                        <p id="pending" style="display: none">{{ pending }}</p>-->
+<!--                                        <p id="archived" style="display: none">{{ archived }}</p>-->
+<!--                                        <p id="dismissed" style="display: none">{{ dismissed }}</p>-->
+<!--                                        <p id="for_demolition" style="display: none">{{ for_demolition }}</p>-->
+<!--                                        <p id="demolished" style="display: none">{{ demolished }}</p>-->
+<!--                                        <p id="deferred" style="display: none">{{ deferred }}</p>-->
+<!--                                        <p id="for_resolution" style="display: none">{{ for_resolution }}</p>-->
+<!--                                      </div>-->
+<!--                                    </div>-->
+                            </div>
+                        </div>
+                    </div>
+                <div class="d-md-flex justify-content-between">
+                    <div class="col">
+                        <div class="mb-1 mt-1 me-0 me-lg-3">
+                            <div class="card border-success">
+                                <div class="card-header navbar-brand text-center" style="color: #400c06">
+                                    <h5><i class="bi bi-basket3-fill"></i><strong> Issue Item</strong></h5>
+                                </div>
+                                <form method="POST" id="IssueForm" action="{{ url_for('issue_item') }}" enctype="multipart/form-data">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                        <div class="d-flex flex-column bd-highlight mb-3 border border-white border-3 rounded">
+                                            <div class="d-flex col-sm-12 justify-content-start p-2">
+                                                <h5 style="color: #fca650">Details</h5>
+                                            </div>
+                                            {% for field in form %}
+                                                {% if field.name == 'employee' %}
+                                                <div class="bd-highlight col-sm-12">
+                                                    <div class="form-floating mb-3 px-2 light-label">
+                                                        {{ field(class="form-select", id="Recipient") }}
+                                                        <label for="Recipient">Recipient</label>  <!-- Add a label for the "Barangay" field -->
+                                                        {% for error in form.employee.errors %}
+                                                            <p class="error" style="color: red">{{ error }}</p>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                {% elif field.name == 'item' %}
+                                                <div class="bd-highlight col-sm-12">
+                                                    <div class="form-floating mb-3 px-2 light-label">
+                                                        {{ field(class="form-select", id="Item") }}
+                                                        <label for="Item">Item</label>  <!-- Add a label for the "Barangay" field -->
+                                                        {% for error in form.employee.errors %}
+                                                            <p class="error" style="color: red">{{ error }}</p>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                {% elif field.name == 'quantity' %}
+                                                <div class="bd-highlight col-sm-12">
+                                                    <div class="form-floating mb-3 px-2 light-label">
+                                                        <input class="form-control" id="Quan" type="text" placeholder="Quantity" name="{{ field.name }}" required="True">
+                                                        <label for="Quan">Quantity</label>
+                                                        {% for error in form.quantity.errors %}
+                                                            <p class="error" style="color: red">{{ error }}</p>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    <div class="d-flex name justify-content-center p-2">
+                                        <button type="submit" class="btn btn-warning">Issue</button>
                                     </div>
-                                    <div class="d-md-flex justify-content-between background-container">
-                                      <div class="col-lg-6 col-md-12 col-sm-12 " style="justify-content: center;">
-                                        <h5 class="text-center p-3"><strong>Case Statistics</strong></h5>
-                                        <div id="piechart"></div>
-                                      </div>
+                                </form>
+                                <div class="row">
+                                 {% with messages = get_flashed_messages() %}
+                                   {% if messages %}
+                                     {% for message in messages %}
+                                        <div class="d-flex justify-content-center" id="triggerModalDiv">
+                                            <p id="messageText" style="color: red; display: none">{{ message }}</p>
+                                        </div>
+                                     {% endfor %}
+                                   {% endif %}
+                                 {% endwith %}
+                                </div>
+                            </div>
+                        </div>
 
-                                      <div class="col-lg-6 col-md-12 col-sm-12 d-none d-lg-inline text-center ">
 
-                                        <h5 class="p-3"><strong>Reminders</strong></h5>
-                                        <p class="p-5">Please be mindful that any information on this website is confidential and should be treated with utmost care. Avoid sharing sensitive details or personal information in public forums. Privacy and security are important to us. <br>Thank you for your cooperation.</p>
-                                        <p id="pending" style="display: none">{{ pending }}</p>
-                                        <p id="archived" style="display: none">{{ archived }}</p>
-                                        <p id="dismissed" style="display: none">{{ dismissed }}</p>
-                                        <p id="for_demolition" style="display: none">{{ for_demolition }}</p>
-                                        <p id="demolished" style="display: none">{{ demolished }}</p>
-                                        <p id="deferred" style="display: none">{{ deferred }}</p>
-                                        <p id="for_resolution" style="display: none">{{ for_resolution }}</p>
-                                      </div>
+                        <!-- Modal to display flash message-->
+                        <div class="modal fade" id="FlashMessage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-sm">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5">Alert</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-1 mt-1 me-0 me-lg-3">
+                            <div class="card border-success">
+                                <div class="card-header navbar-brand text-center" style="color: #400c06">
+                                    <h5><i class="bi bi-bag-plus-fill"></i><strong> Add to Existing Item</strong></h5>
+                                </div>
+                                <form method="POST" id="AddExistingItem" action="{{ url_for('add_existing_item') }}" enctype="multipart/form-data">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    <div class="d-flex flex-column bd-highlight mb-3 border border-white border-3 rounded">
+                                        <div class="d-flex col-sm-12 justify-content-start p-2">
+                                            <h5 style="color: #fca650">Details</h5>
+                                        </div>
+                                        {% for field in form1 %}
+                                            {% if field.name == 'item' %}
+                                            <div class="bd-highlight col-sm-12">
+                                                <div class="form-floating mb-3 px-2 light-label">
+                                                    {{ field(class="form-select", id="existingitem") }}
+                                                    <label for="existingitem">Item</label>
+                                                    {% for error in form1.item.errors %}
+                                                        <p class="error" style="color: red">{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            {% elif field.name == 'quantity' %}
+                                            <div class="bd-highlight col-sm-12">
+                                                <div class="form-floating mb-3 px-2 light-label">
+                                                    <input class="form-control" id="newquantity" type="number" placeholder="Quantity" name="quantity" required="True">
+                                                    <label for="newquantity">Quantity</label>
+                                                    {% for error in form1.quantity.errors %}
+                                                        <p class="error" style="color: red">{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="d-flex name justify-content-center p-2">
+                                        <button type="submit" class="btn btn-warning">Add</button>
+                                    </div>
+                                </form>
+
+                                <div class="row">
+                                 {% with messages = get_flashed_messages() %}
+                                   {% if messages %}
+                                     {% for message in messages %}
+                                        <div class="d-flex justify-content-center" id="triggerModalDiv">
+                                            <p id="messageText" style="color: red; display: none">{{ message }}</p>
+                                        </div>
+                                     {% endfor %}
+                                   {% endif %}
+                                 {% endwith %}
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Modal to display flash message-->
+                        <div class="modal fade" id="FlashMessage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-sm">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5">Alert</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-1 mt-1">
+                            <div class="card border-success">
+                                <div class="card-header navbar-brand text-center" style="color: #400c06">
+                                    <h5><i class="bi bi-plus-circle"></i><strong> Add New Item</strong></h5>
+                                </div>
+                                <form method="POST" id="AddNewItem" action="{{ url_for('add_new_item') }}" enctype="multipart/form-data">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                        <div class="d-flex flex-column bd-highlight mb-3 border border-white border-3 rounded">
+                                            <div class="d-flex col-sm-12 justify-content-start p-2">
+                                                <h5 style="color: #fca650">Details</h5>
+                                            </div>
+                                            {% for field in form2 %}
+                                                {% if field.name == 'item' %}
+                                                <div class="bd-highlight col-sm-12">
+                                                    <div class="form-floating mb-3 px-2 light-label">
+                                                        <input class="form-control" id="Newitem" type="text" placeholder="Item" name="{{ field.name }}" required="True">
+                                                        <label for="NewItem">Item</label>
+                                                        {% for error in form2.quantity.errors %}
+                                                            <p class="error" style="color: red">{{ error }}</p>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                {% elif field.name == 'quantity' %}
+                                                <div class="bd-highlight col-sm-12">
+                                                    <div class="form-floating mb-3 px-2 light-label">
+                                                        <input class="form-control" id="NewQuan" type="number" placeholder="Quantity" name="{{ field.name }}" required="True">
+                                                        <label for="NewQuan">Quantity</label>
+                                                        {% for error in form2.quantity.errors %}
+                                                            <p class="error" style="color: red">{{ error }}</p>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    <div class="d-flex name justify-content-center p-2">
+                                        <button type="submit" class="btn btn-warning">Add</button>
+                                    </div>
+                                </form>
+                                <div class="row">
+                                 {% with messages = get_flashed_messages() %}
+                                   {% if messages %}
+                                     {% for message in messages %}
+                                        <div class="d-flex justify-content-center" id="triggerModalDiv">
+                                            <p id="messageText" style="color: red; display: none">{{ message }}</p>
+                                        </div>
+                                     {% endfor %}
+                                   {% endif %}
+                                 {% endwith %}
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Modal to display flash message-->
+                        <div class="modal fade" id="FlashMessage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-sm">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5">Alert</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <h3>Cases</h3>
+                <h3>List of CTO Employees</h3>
 
                 <div class="d-flex name justify-content-start mb-0 p-3">
                     <!--Search Bar-->
@@ -69,7 +299,7 @@
     <!--                            <i class="fa fa-plus"></i> <span class="ms-1 d-none d-sm-inline">Add Case</span>-->
     <!--                        </button>-->
                             <a class="btn btn-labeled btn-warning shadow" href="{{ url_for('add_case') }}">
-                                <i class="fa fa-plus"></i> <span class="ms-1 d-none d-sm-inline">Add Case</span>
+                                <i class="fa fa-plus"></i> <span class="ms-1 d-none d-sm-inline">Add Employee</span>
                             </a>
 
                         </div>
@@ -80,7 +310,7 @@
                 <!--List of Cases-->
 
                 {% for case in cases_paginated.items %}
-                    <a href="{{ url_for('case', case_no=case.case_no) }}" style="display: block" class="p-2 ">
+                    <a href="{{ url_for('case', case_no=case.id) }}" style="display: block" class="p-2 ">
                          <div class="col-auto px-sm-2 shadow rounded mb-0 ml-1 card radius-10 border-start border-0 border-3 border-regular" style="background: white">
                             <div>
                                 <strong><p class="nav-link pt-2">Case Number: {{ case.case_no }}</p></strong>
@@ -88,27 +318,7 @@
                             <div class="d-flex justify-content-between align-items-center pb-2">
                                 <div class="col-md-8 d-flex align-items-center flex-wrap"> <!-- Adjust the column width based on your design -->
                                     <div class="d-none d-lg-inline">
-                                        {% if case.category == "1" %}
                                             <img src="static/img/location-pin.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
-                                        {% elif case.category == "2" %}
-                                            <img src="static/img/mobile.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
-                                        {% elif case.category == "3" %}
-                                            <img src="static/img/road.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
-                                        {% elif case.category == "4" %}
-                                            <img src="static/img/forest.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
-                                        {% elif case.category == "5" %}
-                                            <img src="static/img/river.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
-                                        {% elif case.category == "6" %}
-                                            <img src="static/img/creek.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
-                                        {% elif case.category == "7" %}
-                                            <img src="static/img/barracks.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
-                                        {% elif case.category == "8" %}
-                                            <img src="static/img/government.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
-                                        {% elif case.category == "9" %}
-                                            <img src="static/img/cityscape.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
-                                        {% elif case.category == "10" %}
-                                            <img src="static/img/house.png" style="width: 40px; height: 40px" class="rounded mx-auto d-block m-3">
-                                        {% endif %}
                                     </div>
                                     <div class="text-wrap">
                                         <p class="nav-link ms-2 mb-0 text-wrap">{{ case.case_title }}</p>
@@ -150,37 +360,35 @@
                     </a>
                 {% endfor %}
 
-
                 <div class = "col">
-                    <div class="d-flex name justify-content-end p-3">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination">
-                                {% if cases_paginated.has_prev %}
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ url_for('user_dashboard', page=cases_paginated.prev_num) }}" aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
-                                {% endif %}
+                <div class="d-flex name justify-content-end p-3">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            {% if cases_paginated.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('user_dashboard', page=cases_paginated.prev_num) }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
 
-                                {% for num in pagination_range %}
-                                <li class="page-item {% if num == cases_paginated.page %}active{% endif %}">
-                                    <a class="page-link" href="{{ url_for('user_dashboard', page=num) }}">{{ num }}</a>
-                                </li>
-                                {% endfor %}
+                            {% for num in pagination_range %}
+                            <li class="page-item {% if num == cases_paginated.page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('user_dashboard', page=num) }}">{{ num }}</a>
+                            </li>
+                            {% endfor %}
 
-                                {% if cases_paginated.has_next %}
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ url_for('user_dashboard', page=cases_paginated.next_num) }}" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                </li>
-                                {% endif %}
-                            </ul>
-                        </nav>
-                    </div>
+                            {% if cases_paginated.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('user_dashboard', page=cases_paginated.next_num) }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
                 </div>
-    <!--        </div>-->
+            </div>
         </div>
     </div>
 </div>
@@ -188,84 +396,73 @@
 
 <script>
 
-// Prevent form submission and update content
-$('#saveBtn').click(function(event) {
-event.preventDefault();
+window.onload = function () {
+    var message = document.getElementById('messageText').textContent;
 
+    // Check if the element with id "triggerModalDiv" exists
+    if ($('#triggerModalDiv').length) {
+        var icon = "success"; // Default icon is "success"
+        var goodjob = "Good Job!"
+        // Check if the message contains the word "error" or "failed" (you can adjust this condition as needed)
+        if (message.toLowerCase().includes("error") || message.toLowerCase().includes("exist")) {
+            icon = "error"; // Change the icon to "error" for error messages
+            goodjob = "Oops!"
+        }
+
+        // Trigger the SweetAlert with the determined icon
+        swal.fire({
+            title: goodjob,
+            text: message,
+            icon: icon, // Use the determined icon
+        });
+    }
+};
+
+let formSubmitted = false;
+
+// Restore input values from Local Storage on page load
+document.addEventListener('DOMContentLoaded', function() {
+    for (let field of document.querySelectorAll('input, textarea')) {
+        if (field.name) {
+            let storedValue = localStorage.getItem(field.name);
+            if (storedValue !== null) {
+                field.value = storedValue;
+            }
+        }
+    }
 });
 
-// Load google charts
-google.charts.load('current', { 'packages': ['corechart'] });
-google.charts.setOnLoadCallback(drawChart);
-
-// Get the element by its id
-var pendingElement = document.getElementById("pending");
-var archivedElement = document.getElementById("archived");
-var dismissedElement = document.getElementById("dismissed");
-var fordemolitionElement = document.getElementById("for_demolition");
-var demolishedElement = document.getElementById("demolished");
-var deferredElement = document.getElementById("deferred");
-var forresolutionElement = document.getElementById("for_resolution");
-
-// Get the text content of the element and parse it as an integer
-var pendingValue = parseInt(pendingElement.textContent);
-var archivedValue = parseInt(archivedElement.textContent);
-var dismissedValue = parseInt(dismissedElement.textContent);
-var fordemolitionValue = parseInt(fordemolitionElement.textContent);
-var demolishedValue = parseInt(demolishedElement.textContent);
-var deferredValue = parseInt(deferredElement.textContent);
-var forresolutionValue = parseInt(forresolutionElement.textContent);
-
-// Draw the chart and set the chart values
-function drawChart() {
-  var data = google.visualization.arrayToDataTable([
-    ['Category', 'Value'],
-    ['Pending (' + pendingValue + ')', pendingValue],
-    ['Archived (' + archivedValue + ')', archivedValue],
-    ['Dismissed (' + dismissedValue + ')', dismissedValue],
-    ['For Demolition (' + fordemolitionValue + ')', fordemolitionValue],
-    ['Demolished (' + demolishedValue + ')', demolishedValue],
-    ['Deferred (' + deferredValue + ')', deferredValue],
-    ['For Resolution (' + forresolutionValue + ')', forresolutionValue]
-  ]);
-
-  // Calculate the width and height based on the container size
-  var container = document.getElementById('piechart');
-  var containerWidth = container.offsetWidth;
-  var containerHeight = containerWidth * 0.7; // You can adjust this aspect ratio as needed
-
-  // Set the options for the chart
-var options = {
-  'width': containerWidth,
-  'height': containerHeight * 0.6,
-  'colors': ['#400c06', '#663d38', '#8c6d6a', '#b39e9b', '#d9cecd', '#ffe69c', '#c0c7ca', '#eacf9a'],
-  'pieHole': 0.4,
-  'legend': {
-    'position': 'right', // Change the position to 'bottom', 'left', 'right', or 'none'
-    'alignment': 'center', // Align the legend to the center
-    'textStyle': {
-      'fontSize': 14, // Change the font size of the legend
-      'fontName': 'Arial, sans-serif' // Change the font family of the legend
+// Save input values to Local Storage on form submit
+document.getElementById('myForm').addEventListener('submit', function() {
+    formSubmitted = true;
+    for (let field of document.querySelectorAll('input, textarea')) {
+        if (field.name) {
+            localStorage.setItem(field.name, field.value);
+        }
     }
-  },
-  'chartArea': {
-    'left': '10%', // Left margin
-    'top': '10%',  // Top margin
-    'width': '80%', // Chart width
-    'height': '80%', // Chart height
-  },
-  'backgroundColor': {
-        fill: '#FF0000',
-        fillOpacity: 0.0
-   }
-};
-  // Display the chart inside the <div> element with id="piechart"
-  var chart = new google.visualization.PieChart(container);
-  chart.draw(data, options);
-}
+});
 
-// Resize the chart when the window size changes
-window.addEventListener('resize', drawChart);
+// Clear local storage data when leaving the page
+window.addEventListener('beforeunload', function() {
+    if (!formSubmitted) {
+        for (let field of document.querySelectorAll('input, textarea')) {
+            if (field.name) {
+                localStorage.removeItem(field.name);
+            }
+        }
+    }
+});
+
+// Clear local storage data when refreshing the page
+window.addEventListener('unload', function() {
+    if (!formSubmitted) {
+        for (let field of document.querySelectorAll('input, textarea')) {
+            if (field.name) {
+                localStorage.removeItem(field.name);
+            }
+        }
+    }
+});
 
 </script>
 

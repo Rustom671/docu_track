@@ -20,7 +20,7 @@
                         </div>
                         {% if current_user.type == '1' or current_user.type == '2' %}
                         <div class="name">
-                            <a class="btn btn-labeled btn-warning shadow" href="{{ url_for('edit_case', case_no=case.case_no) }}">
+                            <a class="btn btn-labeled btn-warning shadow" href="{{ url_for('edit_case', case_no=case.id) }}">
                                 <i class="bi bi-pencil-square"></i> <span class="ms-1 d-none d-sm-inline">Edit</span>
                             </a>
                         </div>
@@ -147,7 +147,7 @@
                             </div>
                             <div class="collapse" id="collapseExample">
                               <div class="card card-body">
-                                <form method="POST" id="Note" enctype="multipart/form-data" action="{{ url_for('note', case_no=case.case_no) }}">
+                                <form method="POST" id="Note" enctype="multipart/form-data" action="{{ url_for('note', case_no=case.id) }}">
                                     <textarea class="form-control mb-3" rows="5" name="notes">{{ notes.note }}</textarea>
                                     <div class = "d-flex justify-content-end">
                                         <button type="submit" class="btn btn-primary">Update</button>
@@ -173,7 +173,7 @@
                             </div>
                             <div class="collapse" id="collapseSummary">
                               <div class="card card-body">
-                                <form method="POST" id="Summary" enctype="multipart/form-data" action="{{ url_for('summary', case_no=case.case_no) }}">
+                                <form method="POST" id="Summary" enctype="multipart/form-data" action="{{ url_for('summary', case_no=case.id) }}">
                                     <textarea class="form-control mb-3" rows="5" name="summary">{{ summary.summary }}</textarea>
                                     {% if current_user.type == '1' or current_user.type == '2' %}
                                     <div class = "d-flex justify-content-end">
@@ -203,7 +203,7 @@
                             <hr>
                             <div class="card">
                                  {% for document in docu %}
-                                    <button type="button" class="btn btn-light btn-align-left show-document radius-10 border-start border-0 border-3 border-regular" data-file-path="{{ document.file_path }}" document-id="{{ document.id }}">
+                                    <button type="button" class="btn btn-light btn-align-left show-document radius-10 border-start border-0 border-3 border-regular" data-file-path="{{ document.file_path }}" document-id="{{ document.case_id }}">
                                         <div class="d-flex justify-content-between ">
                                             <div class="d-flex">
                                                 {% if document.document_type == "1" %}
@@ -341,7 +341,7 @@
                           <div class="modal-body">
 
                                 <!-- HTML form for uploading files-->
-                                <form method="POST" id="SchedForm" enctype="multipart/form-data" action="{{ url_for('schedule', case_no=case.case_no) }}">
+                                <form method="POST" id="SchedForm" enctype="multipart/form-data" action="{{ url_for('schedule', case_no=case.id) }}">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
                                     <div class="d-flex mb-3">
@@ -387,7 +387,7 @@
                           <div class="modal-body">
 
                                 <!-- HTML form editing status-->
-                                <form method="POST" id="StatusForm" enctype="multipart/form-data" action="{{ url_for('status', case_no=case.case_no) }}">
+                                <form method="POST" id="StatusForm" enctype="multipart/form-data" action="{{ url_for('status', case_no=case.id) }}">
                                     {% for field in form1 %}
                                         {% if field.name == 'status' %}
                                             <label>Select Status</label>

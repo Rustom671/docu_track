@@ -5,7 +5,7 @@
 
 <div  class="wrapper">
     <div class="logo">
-        <img src="static/img/cbao logo copy.png" alt="">
+        <img src="static/img/baguio logo.png" alt="">
     </div>
     <div class="text-center mt-4 name">
       Register User
@@ -41,11 +41,11 @@
                     <p class="error">{{ error }}</p>
                 {% endfor %}
 
-            {% elif field.name == 'office' %}
+            {% elif field.name == 'division' %}
             <div class="form-field d-flex align-items-center">
-                <input type="text" name="{{ field.name }}" placeholder="Office" required="True">
+                <input type="text" name="{{ field.name }}" placeholder="Division" required="True">
             </div>
-                {% for error in form.office.errors %}
+                {% for error in form.division.errors %}
                     <p class="error">{{ error }}</p>
                 {% endfor %}
 
