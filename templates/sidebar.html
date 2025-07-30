@@ -1,6 +1,6 @@
 
 <!--<div class="position-fixed" >-->
-    <div class="profilePic d-none d-md-block mt-4">
+    <div class="profilePic d-none d-md-block mt-5">
         <img src="static/img/baguio logo.png" alt="">
     </div>
     <div class="text-center mt-4 name d-none d-md-block text-white">
@@ -30,18 +30,18 @@
                 <a href="{{ url_for('scheduled') }}" class="nav-link px-0 align-middle">
                     <i class="fs-4 bi-table text-white"></i> <span class="ms-1 d-none d-sm-inline text-white">Scheduled</span></a>
             </li>
-            {% if current_user.type == '1' or current_user.type == '2' %}
-            <li>
-                <a href="{{ url_for('for_scheduling') }}" class="nav-link px-0 align-middle">
-                    <i class="fs-4 bi-grid text-white"></i> <span class="ms-1 d-none d-sm-inline text-white">For Scheduling</span></a>
-            </li>
-            {% endif %}
+
             {% if current_user.type == '1' %}
             <li>
                 <a href="{{ url_for('accounts') }}" class="nav-link px-0 align-middle ">
                     <i class="fs-4 bi-people text-white"></i> <span class="ms-1 d-none d-sm-inline text-white">Accounts</span></a>
             </li>
             {% endif %}
+
+            <li>
+                <a href="" class="nav-link px-0 align-middle ">
+                    <i class="fs-4 bi-trash text-white"></i> <span class="ms-1 d-none d-sm-inline text-white">Disposed</span></a>
+            </li>
 <!--            <li>-->
 <!--                <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-0 align-middle">-->
 <!--                    <i class="fs-4 bi-grid"></i> <span class="ms-1 d-none d-sm-inline">Products</span> </a>-->

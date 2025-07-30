@@ -1,4 +1,14 @@
+.list-group-item:hover {
+    background-color: #d4edda !important; /* Light green on hover */
+    cursor: pointer; /* Makes it look clickable */
+    transition: background-color 0.2s ease-in-out;
+}
 
+#barChart {
+    width: 100% !important;  /* Keep full width */
+    max-width: 500px;  /* Set a max width */
+    height: 300px !important;  /* Set a fixed height */
+}
 .custom-dropdown {
     /* Add your custom styles here */
     width: 100%;
@@ -167,12 +177,17 @@
 .nav-pill,
 .nav-link,
 .hr {
-  color: #400c06;
+  color: nav-link;
 
 }
 .custom-outline-button {
-        border-color: #400c06; /* Replace with your desired color */
-        color: #400c06; /* Text color */
+        border-color: #165316; /* Replace with your desired color */
+        color:white; /* Text color */
+        background-color: #165316;
+    }
+.custom-outline-search {
+        border-color: #165316; /* Replace with your desired color */
+        color:white; /* Text color */
     }
 /* footer CSS */
 
@@ -690,8 +705,8 @@ body {
 }
 
 .custom-outline-button {
-        border-color: #400c06; /* Replace with your desired color */
-        color: #400c06; /* Text color */
+        border-color: #165316; /* Replace with your desired color */
+        color: #165316; /* Text color */
     }
 /* footer CSS */
 

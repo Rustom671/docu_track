@@ -1,0 +1,126 @@
+[
+    {
+        "ID": "1",
+        "Position": "Administrative Aide III (Driver)"
+    },
+    {
+        "ID": "2",
+        "Position": "Administrative Aide III (Utility)"
+    },
+    {
+        "ID": "3",
+        "Position": "Administrative Aide IV"
+    },
+    {
+        "ID": "4",
+        "Position": "Administrative Aide VI"
+    },
+    {
+        "ID": "5",
+        "Position": "Administrative Assistant III"
+    },
+    {
+        "ID": "6",
+        "Position": "Administrative Assistant V"
+    },
+    {
+        "ID": "7",
+        "Position": "Administrative Officer II"
+    },
+    {
+        "ID": "8",
+        "Position": "Administrative Officer III"
+    },
+    {
+        "ID": "9",
+        "Position": "Administrative Officer IV"
+    },
+    {
+        "ID": "10",
+        "Position": "Administrative Officer V"
+    },
+    {
+        "ID": "11",
+        "Position": "Assistant City Treasurer"
+    },
+    {
+        "ID": "12",
+        "Position": "City Treasurer"
+    },
+    {
+        "ID": "13",
+        "Position": "Laborer"
+    },
+    {
+        "ID": "14",
+        "Position": "License Inspector I"
+    },
+    {
+        "ID": "15",
+        "Position": "Local Revenue Collection Officer I"
+    },
+    {
+        "ID": "16",
+        "Position": "Local Revenue Collection Officer II"
+    },
+    {
+        "ID": "17",
+        "Position": "Local Revenue Collection Officer III"
+    },
+    {
+        "ID": "18",
+        "Position": "Local Treasury Operation III"
+    },
+    {
+        "ID": "19",
+        "Position": "Local Treasury Operation Officer I"
+    },
+    {
+        "ID": "20",
+        "Position": "Local Treasury Operation Officer IV"
+    },
+    {
+        "ID": "21",
+        "Position": "Local Treasury Operation Officer II"
+    },
+    {
+        "ID": "22",
+        "Position": "Local Treasury Operation Officer III"
+    },
+    {
+        "ID": "23",
+        "Position": "Maintenance"
+    },
+    {
+        "ID": "24",
+        "Position": "Market Supervisor I"
+    },
+    {
+        "ID": "25",
+        "Position": "Market Supervisor II"
+    },
+    {
+        "ID": "26",
+        "Position": "Market Supervisor III"
+    },
+    {
+        "ID": "27",
+        "Position": "Market Supervisor IV"
+    },
+    {
+        "ID": "28",
+        "Position": "Parking Aide I"
+    },
+    {
+        "ID": "29",
+        "Position": "Revenue Collection Clerk II"
+    },
+    {
+        "ID": "30",
+        "Position": "Supervising Administrative Officer"
+    },
+    {
+        "ID": "31",
+        "Position": "Ticket Checker"
+    }
+]

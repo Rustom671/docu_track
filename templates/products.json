@@ -2,22 +2,22 @@
     {
         "ID": "1",
         "Product": "1kg Detergent powder",
-        "Quantity": "120"
+        "Quantity": "90"
     },
     {
         "ID": "2",
         "Product": "2 kg Floor Wax",
-        "Quantity": "5"
+        "Quantity": "10"
     },
     {
         "ID": "3",
         "Product": "A4 File Folder",
-        "Quantity": "201"
+        "Quantity": "205"
     },
     {
         "ID": "4",
         "Product": "Adding Machine Tape",
-        "Quantity": "120"
+        "Quantity": "119"
     },
     {
         "ID": "5",
@@ -47,12 +47,12 @@
     {
         "ID": "10",
         "Product": "Alcohol / Gal",
-        "Quantity": "15"
+        "Quantity": "14"
     },
     {
         "ID": "11",
         "Product": "alcohol / Bottle",
-        "Quantity": "15"
+        "Quantity": "9"
     },
     {
         "ID": "12",
@@ -142,7 +142,7 @@
     {
         "ID": "29",
         "Product": "Body soap.1",
-        "Quantity": "10"
+        "Quantity": "5"
     },
     {
         "ID": "30",
@@ -172,7 +172,7 @@
     {
         "ID": "35",
         "Product": "Brooms",
-        "Quantity": "5"
+        "Quantity": "4"
     },
     {
         "ID": "36",
@@ -242,7 +242,7 @@
     {
         "ID": "49",
         "Product": "Deodorant- Penguin",
-        "Quantity": "10"
+        "Quantity": "9"
     },
     {
         "ID": "50",
@@ -502,7 +502,7 @@
     {
         "ID": "101",
         "Product": "Finger moistener/pcs",
-        "Quantity": "20"
+        "Quantity": "19"
     },
     {
         "ID": "102",
@@ -532,7 +532,7 @@
     {
         "ID": "107",
         "Product": "Flex stick ballpen.",
-        "Quantity": "150"
+        "Quantity": "147"
     },
     {
         "ID": "108",
@@ -547,7 +547,7 @@
     {
         "ID": "110",
         "Product": "Folder legal/pcs",
-        "Quantity": "1000"
+        "Quantity": "997"
     },
     {
         "ID": "111",
@@ -1067,12 +1067,12 @@
     {
         "ID": "214",
         "Product": "Rubber Band small",
-        "Quantity": "50"
+        "Quantity": "49"
     },
     {
         "ID": "215",
         "Product": "Rubber band small.",
-        "Quantity": "75"
+        "Quantity": "73"
     },
     {
         "ID": "216",
@@ -1087,7 +1087,7 @@
     {
         "ID": "218",
         "Product": "Scissors",
-        "Quantity": "37"
+        "Quantity": "35"
     },
     {
         "ID": "219",
@@ -1242,7 +1242,7 @@
     {
         "ID": "249",
         "Product": "Sticker paper A4/packs",
-        "Quantity": "50"
+        "Quantity": "49"
     },
     {
         "ID": "250",
@@ -1417,6 +1417,11 @@
     {
         "ID": "284",
         "Product": "Zonrox/gal",
-        "Quantity": "38"
+        "Quantity": "39"
+    },
+    {
+        "ID": "285",
+        "Product": "Anabelle",
+        "Quantity": "3"
     }
 ]

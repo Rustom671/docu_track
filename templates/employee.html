@@ -1,0 +1,573 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+{% include "header_test.html" %}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/card_border.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container-fluid">
+    <div class="row flex-nowrap">
+        <div class="col-xl-2 col-lg-2 col-md-3 col-2 bg-dark shadow min-vh-100 position-fixed d-inline-block">
+            {% include "sidebar.html" %}
+        </div>
+        <div class="col-xl-10 col-lg-10 col-md-9 col-10 offset-xl-2 offset-lg-2 offset-md-3 offset-2">
+            <div class="py-3 px-lg-3 px-md-2 px-sm-3 px-xs-3" >
+                <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3 mt-3">
+                    <div class = "col mb-3 d-flex justify-content-between">
+                         <div class="name">
+                            <h5 style="color: #fca650">Details</h5>
+                        </div>
+                        {% if current_user.type == '1' or current_user.type == '2' %}
+                        <div class="name">
+                            <a class="btn btn-labeled btn-warning shadow" href="">
+                                <i class="bi bi-pencil-square"></i> <span class="ms-1 d-none d-sm-inline">Edit</span>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <hr>
+                    <div class = "d-flex justify-content-between">
+                        <p style="color: #12632a">Employee Number: <strong> {{ employee_no }}</strong></p>
+                            <p class="nav-link" data-toggle="modal" data-target="#Status"><strong>Status:</strong></p>
+                        {% if current_user.type == '1' or current_user.type == '2' %}
+                        <a data-bs-toggle="modal" data-bs-target="#Status">
+                            <i class="bi bi-three-dots"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <hr>
+                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+                        <!-- Employee Profile Section (Left) -->
+                        <div class="col-lg-3 col-md-4 col-sm-12 text-center">
+                            {% if emp_data.Gender == '1' %}
+                                <img src="static/img/user.png" class="rounded mx-auto d-block m-3" style="width: 120px; height: 120px;" alt="User Image">
+                            {% elif emp_data.Gender == '2' %}
+                                <img src="static/img/user-female.png" class="rounded mx-auto d-block m-3" style="width: 120px; height: 120px;" alt="User Image">
+                            {% endif %}
+
+<!--                            admin - 1-->
+<!--                            market - 2-->
+<!--                            rpt - 3-->
+<!--                            btfd - 4-->
+<!--                            cid - 5-->
+<!--                            cash - 6-->
+<!--                            toru - 7-->
+
+                            <h5 style="color: #12632a"><strong>{{ emp_data.Name }}</strong></h5>
+                            <h6><strong>
+                                {% for pos in position %}
+                                    {% if pos.ID|string == emp_data.Position|string %}
+                                        {{ pos.Position }}
+                                    {% endif %}
+                                {% endfor %}
+                            </strong></h6>
+                            {% if emp_data.Division == '1' %}
+                                <p>Administrative Division</p>
+                            {% elif emp_data.Division == '2' %}
+                                <p>Market Division</p>
+                            {% elif emp_data.Division == '3' %}
+                                <p>Real Property Tax Division</p>
+                            {% elif emp_data.Division == '4' %}
+                                <p>Business Taxes and Fees Division</p>
+                            {% elif emp_data.Division == '5' %}
+                                <p>Campaign and Investigation Division</p>
+                            {% elif emp_data.Division == '6' %}
+                                <p>Cash Division</p>
+                            {% elif emp_data.Division == '7' %}
+                                <p>Treasury Operations Review Unit</p>
+                            {% endif %}
+
+                        </div>
+
+                        <!-- Bar Chart Section (Right) -->
+                        <div class="col-lg-8 col-md-7 col-sm-12 d-flex flex-column align-items-center">
+                            <h5><strong>Top 5 Issued Items</strong></h5>
+                            <canvas id="barChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3">
+                        <div class=" px-sm-2 px-0 rounded">
+                            <div class = "col d-flex justify-content-between">
+                                 <div class="name">
+                                    <h5 style="color: #fca650">Notes</h5>
+                                 </div>
+                            </div>
+                            <hr>
+                            <div class = "d-flex justify-content-center mb-3">
+                                <a class="btn btn-light btn-align-left shadow" style="color: #400c06" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                    <i class="bi bi-card-text"></i> <span class="ms-1 d-none d-sm-inline">Show Notes</span>
+                                </a>
+                            </div>
+                            <div class="collapse" id="collapseExample">
+                              <div class="card card-body">
+                                <form method="POST" id="Note" enctype="multipart/form-data" action="{{ url_for('note', emp_no=employee_no) }}">
+                                    <textarea class="form-control mb-3" rows="5" name="notes">{{ notes.note }}</textarea>
+                                    <div class = "d-flex justify-content-end">
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                    </div>
+                                </form>
+                              </div>
+                            </div>
+                        </div>
+                </div>
+
+                <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3">
+                        <div class=" px-sm-2 px-0 rounded">
+                            <div class = "col d-flex justify-content-between">
+                                 <div class="name">
+                                    <h5 style="color: #fca650">History</h5>
+                                 </div>
+                            </div>
+                            <hr>
+                            <div class = "d-flex justify-content-center mb-3">
+                                <a class="btn btn-light btn-align-left shadow" style="color: #400c06" data-bs-toggle="collapse" href="#collapseSummary" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                    <i class="bi bi-list-ol"></i> <span class="ms-1 d-none d-sm-inline">History</span>
+                                </a>
+                            </div>
+                            <div class="collapse" id="collapseSummary">
+                              <div class="card card-body" style="max-height: 300px; overflow-y: auto;">
+                                  {% for history in hist %}
+                                    {% for prod in product %}
+                                        {% if history.item_id|string == prod.ID|string %}
+                                        <p>{{history.q_issued}} {{prod.Product}} issued on {{history.date_issued|format_date}}</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                  {% endfor %}
+                              </div>
+                            </div>
+                        </div>
+                </div>
+
+                <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3">
+                        <div class=" px-sm-2 px-0 rounded mb-3">
+                            <div class = "col mb-3 d-flex justify-content-between">
+                                 <div class="name">
+                                    <h5 style="color: #fca650">ICS / ARE</h5>
+                                </div>
+                                {% if current_user.type == '1' or current_user.type == '2' %}
+                                <div class="name">
+                                    <a class="btn btn-labeled btn-warning shadow" data-bs-toggle="modal" data-bs-target="#addDoc">
+                                        <i class="fa fa-plus"></i> <span class="ms-1 d-none d-sm-inline">Add Document</span>
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <hr>
+                            <div class="list-group">
+                                {% for document in docu %}
+                                    <div class="list-group-item list-group-item-hover d-flex align-items-center justify-content-between bg-light-green py-2 w-100 shadow-sm radius-10 mb-1">
+                                        <!-- Left: Icon + Document Name -->
+                                        <div class="d-flex align-items-center">
+                                            {% if document.document_type == "1" %}
+                                                <i class="bi bi-pc-display-horizontal text-success me-2 fs-4"></i>
+                                                <span>IT Equipment - Computer Set</span>
+                                            {% elif document.document_type == "2" %}
+                                                <i class="bi bi-file-earmark-check-fill text-success me-2 fs-4"></i>
+                                                <span>IT Equipment - Laptop</span>
+                                            {% elif document.document_type == "3" %}
+                                                <i class="bi bi-file-earmark-text-fill text-success me-2 fs-4"></i>
+                                                <span>IT Equipment - Keyboard</span>
+                                            {% elif document.document_type == "4" %}
+                                                <i class="bi bi-mic-fill text-success me-2 fs-4"></i>
+                                                <span>IT Equipment - Mouse</span>
+                                            {% elif document.document_type == "5" %}
+                                                <i class="bi bi-folder-fill text-success me-2 fs-4"></i>
+                                                <span>IT Equipment - AVR</span>
+                                            {% elif document.document_type == "6" %}
+                                                <i class="bi bi-folder-fill text-success me-2 fs-4"></i>
+                                                <span>IT Equipment - Power Supply</span>
+                                            {% elif document.document_type == "7" %}
+                                                <i class="bi bi-journals text-success me-2 fs-4"></i>
+                                                <span>Furniture - Table</span>
+                                            {% elif document.document_type == "8" %}
+                                                <i class="bi bi-info-square-fill text-success me-2 fs-4"></i>
+                                                <span>Furniture - Chair</span>
+                                            {% elif document.document_type == "9" %}
+                                                <i class="bi bi-info-square-fill text-success me-2 fs-4"></i>
+                                                <span>Furniture - Cabinet</span>
+                                            {% elif document.document_type == "10" %}
+                                                <i class="bi bi-file-earmark-plus-fill text-success me-2 fs-4"></i>
+                                                <span>Stapler</span>
+                                            {% elif document.document_type == "11" %}
+                                                <i class="bi bi-file-earmark-plus-fill text-success me-2 fs-4"></i>
+                                                <span>Others</span>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="d-flex align-items-center">
+<!--                                            <a href="#" class="position-relative me-3">-->
+<!--                                                <i class="bi bi-eye-fill text-danger fs-5"></i>-->
+<!--                                                <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">4</span>-->
+<!--                                            </a>-->
+
+                                            <div class="dropdown">
+                                                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    Select
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item show-document" data-file-path="{{ document.file_path }}" document-id="{{ document.case_id }}" href="#">View</a></li>
+                                                    <li><a class="dropdown-item" href="#">Edit</a></li>
+                                                    <li><a class="dropdown-item" href="#">Delete</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+<!--                            <div class="card">-->
+<!--                                {% for document in docu %}-->
+<!--                                    <button type="button" class="btn btn-light btn-align-left show-document radius-10 border shadow-sm mb-1" data-file-path="{{ document.file_path }}" document-id="{{ document.case_id }}">-->
+<!--                                        <div class="d-flex align-items-center w-100">  &lt;!&ndash; Ensure flex alignment is applied here &ndash;&gt;-->
+<!--                                            <div class="d-flex align-items-center"> &lt;!&ndash; Center items vertically within this container &ndash;&gt;-->
+<!--                                                {% if document.document_type == "1" %}-->
+<!--                                                    <i class="bi bi-binoculars-fill me-2"></i> &lt;!&ndash; Adds margin between icon and text &ndash;&gt;-->
+<!--                                                    <span>IT Equipment - Computer Set</span>-->
+<!--                                                {% elif document.document_type == "2" %}-->
+<!--                                                    <i class="bi bi-file-earmark-check-fill me-2"></i>-->
+<!--                                                    <span>IT Equipment - Laptop</span>-->
+<!--                                                {% elif document.document_type == "3" %}-->
+<!--                                                    <i class="bi bi-file-earmark-text-fill me-2"></i>-->
+<!--                                                    <span>IT Equipment - Keyboard</span>-->
+<!--                                                {% elif document.document_type == "4" %}-->
+<!--                                                    <i class="bi bi-mic-fill me-2"></i>-->
+<!--                                                    <span>IT Equipment - Mouse</span>-->
+<!--                                                {% elif document.document_type == "5" %}-->
+<!--                                                    <i class="bi bi-folder-fill me-2"></i>-->
+<!--                                                    <span>IT Equipment - AVR</span>-->
+<!--                                                {% elif document.document_type == "6" %}-->
+<!--                                                    <i class="bi bi-folder-fill me-2"></i>-->
+<!--                                                    <span>IT Equipment - Power Supply</span>-->
+<!--                                                {% elif document.document_type == "7" %}-->
+<!--                                                    <i class="bi bi-journals me-2"></i>-->
+<!--                                                    <span>Furniture - Table</span>-->
+<!--                                                {% elif document.document_type == "8" %}-->
+<!--                                                    <i class="bi bi-info-square-fill me-2"></i>-->
+<!--                                                    <span>Furniture - Chair</span>-->
+<!--                                                {% elif document.document_type == "9" %}-->
+<!--                                                    <i class="bi bi-info-square-fill me-2"></i>-->
+<!--                                                    <span>Furniture - Cabinet</span>-->
+<!--                                                {% elif document.document_type == "10" %}-->
+<!--                                                    <i class="bi bi-file-earmark-plus-fill me-2"></i>-->
+<!--                                                    <span>Stapler</span>-->
+<!--                                                {% elif document.document_type == "11" %}-->
+<!--                                                    <i class="bi bi-file-earmark-plus-fill me-2"></i>-->
+<!--                                                    <span>Others</span>-->
+<!--                                                {% endif %}-->
+<!--                                            </div>-->
+<!--                                            <div class="d-none d-md-inline ms-2"> &lt;!&ndash; Added ms-2 for spacing &ndash;&gt;-->
+<!--                                                {% for name in user %}-->
+<!--                                                    {% if document.user_id == name.id %}-->
+<!--                                                    <p style="color: #a6a19e">Uploaded on {{ document.upload_date.strftime('%B %d, %Y %I:%M %p') }} by {{ name.user_fname }} {{ name.user_lname }}</p>-->
+<!--                                                    {% endif %}-->
+<!--                                                {% endfor %}-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </button>-->
+<!--                                {% endfor %}-->
+<!--                            </div>-->
+                        </div>
+                    <div>
+                     {% with messages = get_flashed_messages() %}
+                       {% if messages %}
+                         {% for message in messages %}
+                            <div class="d-flex justify-content-center" id="triggerModalDiv">
+                                <p id="messageText" style="color: red; display: none">{{ message }}</p>
+                            </div>
+                         {% endfor %}
+                       {% endif %}
+                     {% endwith %}
+                    </div>
+                    <!-- Modal to display-->
+                    <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Files </h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                              <div id="uploadForm" style="display: none;">
+                                <!-- HTML form for uploading resolution -->
+                                <form action="/upload_resolution" method="POST" enctype="multipart/form-data">
+                                    <input type="file" name="resolutionFile">
+                                    <input type="submit" value="Upload Resolution">
+                                </form>
+                            </div>
+                            <iframe id="pdfViewerModal" width="100%" height="800px" allow="autoplay"></iframe>
+                          </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                              </div>
+                        </div>
+                      </div>
+                    </div>
+
+                     <!-- Modal to add document-->
+                    <div class="modal fade" id="addDoc" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5">Add Files</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+
+                                <!-- HTML form for uploading files-->
+                                <form method="POST" id="myForm" enctype="multipart/form-data">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    {% for field in form %}
+                                        {% if field.name == 'file_type' %}
+                                            <label>File Type</label>
+                                            <div class="form-floating mb-3 px-2 light-label">
+                                                {{ field(class="form-select", id="FileType") }}
+                                            </div>
+                                        {% elif field.name == 'files' %}
+
+                                            <div class="mb-3">
+                                                {{ field.label(for="formFile", class="form-label") }}
+                                                {{ field(class="form-control", id="formFile", type="file") }}
+                                            </div>
+
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#FlashMessage">Save changes</button>
+                                    </div>
+                                </form>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Modal to schedule-->
+                    <div class="modal fade" id="Sched" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5">Schedule</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+
+                                <!-- HTML form for uploading files-->
+                                <form method="POST" id="SchedForm" enctype="multipart/form-data" action="{{ url_for('schedule', case_no=employee_no) }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                                    <div class="d-flex mb-3">
+                                        <div class="col mt-2">
+                                            <label>Pick a date for deliberation:</label>
+                                        </div>
+                                        <div class="col px-3 container-fluid">
+                                            <input class="form-control" id="datepicker" name="schedule" autocomplete="off">
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex mb-3">
+                                        <div class="mt-2">
+                                            <label>Remarks:</label>
+                                        </div>
+                                        <div class="px-3 container-fluid">
+                                            <textarea class="form-control w-100" id="exampleFormControlTextarea1" name="remarks"></textarea>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Other form fields and buttons can be added here -->
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#FlashMessage">Save changes</button>
+                                    </div>
+                                </form>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                     <!-- Modal to edit Status-->
+                    <div class="modal fade" id="Status" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5">Edit Status</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+
+                                <!-- HTML form editing status-->
+                                <form method="POST" id="StatusForm" enctype="multipart/form-data" action="">
+                                    {% for field in form1 %}
+                                        {% if field.name == 'status' %}
+                                            <label>Select Status</label>
+                                            <div class="form-floating mb-3 px-2 light-label">
+                                                {{ field(class="form-select", id="status") }}
+                                            </div>
+                                        {% elif field.name == 'remarks' %}
+
+                                            <div class="mb-3">
+                                                {{ field.label(for="formFile", class="form-label") }}
+                                                {{ field(class="form-control", id="formFile", type="textarea") }}
+                                            </div>
+
+                                        {% endif %}
+                                    {% endfor %}
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#FlashMessage">Save changes</button>
+                                    </div>
+                                </form>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                        const showDocumentButtons = document.querySelectorAll('.show-document');
+
+                            showDocumentButtons.forEach(button => {
+                                button.addEventListener('click', () => {
+                                    const filePath = button.getAttribute('data-file-path');
+                                    var id = button.getAttribute('document.id');
+                                    // Open the modal
+                                    $(pdfModal).modal('show');
+
+                                    // Load and display the PDF in the modal's iframe
+                                    pdfViewerModal.src = filePath;
+                                });
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add this JavaScript code after your content -->
+<script>
+$('#datepicker').datepicker({
+    uiLibrary: 'bootstrap5',
+    format: 'mm/dd/yyyy',
+    autoclose: true,
+    todayHighlight: true,
+    startDate: new Date() // Set the minimum date to the current date
+});
+
+window.onload = function () {
+    var message = document.getElementById('messageText').textContent;
+    // Check if the element with id "triggerModalDiv" exists
+    if ($('#triggerModalDiv').length) {
+        var icon = "success"; // Default icon is "success"
+        var goodjob = "Good Job!"
+        // Check if the message contains the word "error" or "failed" (you can adjust this condition as needed)
+        if (message.toLowerCase().includes("error") || message.toLowerCase().includes("extension")) {
+            icon = "error"; // Change the icon to "error" for error messages
+            goodjob = "Oops!"
+        }
+
+        // Trigger the SweetAlert with the determined icon
+        swal.fire({
+            title: goodjob,
+            text: message,
+            icon: icon, // Use the determined icon
+        });
+    }
+};
+// For bar graph
+var chartInstance; // Global variable to store the chart instance
+
+function renderChart() {
+    var ctx = document.getElementById('barChart').getContext('2d');
+
+    // ✅ Product list (passed from Jinja)
+    var productList = {{ product | tojson | safe }}; // Ensure correct passing
+
+    // ✅ Function to find product name by item ID
+    function getProductName(itemId) {
+        itemId = itemId.toString(); // Convert to string for comparison
+        for (var i = 0; i < productList.length; i++) {
+            if (productList[i].ID === itemId) {
+                return productList[i].Product; // ✅ Return product name
+            }
+        }
+        return "Unknown Item " + itemId; // Default if not found
+    }
+
+    // ✅ Get data from Jinja variables safely
+    var topItems = [];
+    {% for key, item in top_items.items() %}
+        {% if item and item['item_id'] and item['quantity'] %}
+            topItems.push({
+                item_id: "{{ item['item_id'] }}",
+                quantity: {{ item['quantity'] }}
+            });
+        {% endif %}
+    {% endfor %}
+
+    var labels = [];
+    var data = [];
+
+    // ✅ Populate labels with "Product Name (Quantity)"
+    topItems.forEach(item => {
+        if (item.item_id && item.quantity) {
+            let productName = getProductName(item.item_id);
+            labels.push(`${productName} (${item.quantity})`); // 🔥 Append quantity in parentheses
+            data.push(item.quantity);
+        }
+    });
+
+    // 🔥 Destroy old chart instance before creating a new one
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+
+    // ✅ Create the chart if there is data
+    if (labels.length > 0) {
+        chartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels, // ✅ Product Name + Quantity
+                datasets: [{
+                    label: 'Quantity Issued',
+                    data: data,
+                    backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#FFC133'],
+                    borderColor: '#000000',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y', // ✅ Horizontal bars
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }, // Hide legend
+                },
+                scales: {
+                    x: { beginAtZero: true },
+                    y: { ticks: { autoSkip: false } }
+                }
+            }
+        });
+    } else {
+        console.log("⚠️ No data available for the bar chart.");
+    }
+}
+
+// ✅ Run function when page loads
+window.onload = renderChart;
+</script>
+
+{% include "javascript.html" %}
+{% endblock %}

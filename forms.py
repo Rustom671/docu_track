@@ -16,12 +16,18 @@ with open('templates/employee.json', 'r') as json_file:
 with open('templates/products.json', 'r') as json_file:
     products = json.load(json_file)
 
+# Load the JSON data from the file
+with open('templates/position.json', 'r') as json_file:
+    position = json.load(json_file)
+
 # Extract the "BARANGAY" values from the JSON data
 all_barangay_choices = [(entry["ID"], entry["BARANGAY"]) for entry in barangay_choices]
 # Extract the "Name" values from the JSON data
 all_employees = [(entry["ID"], entry["Name"]) for entry in employees]
 # Extract the "Product" values from the JSON data
 all_products = [(entry["ID"], f"{entry['Product']} - ( {entry['Quantity']} )") for entry in products]
+# Extract the "Position" values from the JSON data
+all_position = [(entry["ID"], f"{entry['Position']}") for entry in position]
 
 def no_spaces_only(form, field):
     if field.data.strip() == "":
@@ -60,31 +66,27 @@ class LoginForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Login")
 
-class AddEmployee(FlaskForm):
-    case_no = StringField("Case Number", validators=[DataRequired(), no_spaces_only])
-    case_title = TextAreaField("Case Title", validators=[DataRequired(), no_spaces_only])
-    case_category = SelectField("", validators=[DataRequired()], choices=[
-        ('1', 'Registered Land'),
-        ('2', 'Unregistered Land'),
-        ('3', 'Road Right-of-Way (RROW)'),
-        ('4', 'Forest Reservation and Greenbel Area'),
-        ('5', 'Watershed'),
-        ('6', 'Esteros and Waterway'),
-        ('7', 'Military Reservation'),
-        ('8', 'Government Reservation'),
-        ('9', 'City / Barangay Needs'),
-        ('10', 'Others')
+class AddNewEmployee(FlaskForm):
+    emp_lname = TextAreaField("Last Name", validators=[DataRequired(), no_spaces_only])
+    emp_fname = TextAreaField("First Name", validators=[DataRequired(), no_spaces_only])
+    emp_mname = TextAreaField("Middle Initial", validators=[DataRequired(), no_spaces_only])
+    emp_position = SelectField("Position", validators=[DataRequired()], choices=all_position)
+    emp_division = SelectField("Division", validators=[DataRequired()], choices=[
+        ('1', 'Administrative Division'),
+        ('2', 'Market Division'),
+        ('3', 'Real Property Tax Division'),
+        ('4', 'Business Taxes and Fees Division'),
+        ('5', 'Campaign and Investigation Division'),
+        ('6', 'Cash Division'),
+        ('7', 'Treasury Operations Review Unit')
+
         # Add more options as needed
     ])
-    complainant_name = TextAreaField("Name of Complainant", validators=[DataRequired(), no_spaces_only])
-    contact_complainant = StringField("Contact Information", validators=[DataRequired(), no_spaces_only])
-    address_complainant = StringField("Address of Complainant", validators=[DataRequired(), no_spaces_only])
-    respondent_name = TextAreaField("Name of Respondent", validators=[DataRequired(), no_spaces_only])
-    contact_respondent = StringField("Contact Information", validators=[DataRequired(), no_spaces_only])
-    address_respondent = StringField("Address of Respondent", validators=[DataRequired(), no_spaces_only])
-    location_of_structure = StringField("Location of Subject Structure", validators=[DataRequired(), no_spaces_only])
-    barangay = SelectField("Barangay", validators=[DataRequired()], choices=all_barangay_choices)
-    #inves_report = FileField("Investigation Report", validators=[DataRequired()])
+    emp_gender = SelectField("Gender", validators=[DataRequired()], choices=[
+        ('1', 'Male'),
+        ('2', 'Female')
+        # Add more options as needed
+    ])
 
 class EditCase(FlaskForm):
     case_no = StringField("Case Number")
@@ -112,17 +114,19 @@ class EditCase(FlaskForm):
     barangay = SelectField("Barangay", validators=[DataRequired()], choices=all_barangay_choices)
 
 class AddFile(FlaskForm):
+
     file_type = SelectField("", validators=[DataRequired()], choices=[
-        ('1', 'Investigation Report'),
-        ('2', 'Resolution'),
-        ('3', 'Minutes of Meeting'),
-        ('4', 'Audio File'),
-        ('5', 'Position Paper - Complainant'),
-        ('6', 'Position Paper - Respondent'),
-        ('7', 'Post Demolition Report'),
-        ('8', 'Notice of Meeting'),
-        ('9', 'Notice for Position Paper'),
-        ('10', 'Others')
+        ('1', 'IT Equipment - Computer Set'),
+        ('2', 'IT Equipment - Laptop'),
+        ('3', 'IT Equipment - Keyboard'),
+        ('4', 'IT Equipment - Mouse'),
+        ('5', 'IT Equipment - AVR'),
+        ('6', 'IT Equipment - Power Supply'),
+        ('7', 'Furniture - Table'),
+        ('8', 'Furniture - Chair'),
+        ('9', 'Furniture - Cabinet'),
+        ('10', 'Stapler'),
+        ('11', 'Others')
         # Add more options as needed
     ])
     files = FileField("File Upload", validators=[DataRequired()])
@@ -141,6 +145,16 @@ class EditStatus(FlaskForm):
     ])
     remarks = TextAreaField("Remarks")
 
+class RequestItem(FlaskForm):
+    employee = SelectField("Recipient", validators=[DataRequired()], choices=all_employees)
+    item = SelectField("Item", validators=[DataRequired()], choices=all_products)
+    quantity = StringField("Quantity", validators=[DataRequired(), no_spaces_only])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.item.choices = get_products()  # Load choices dynamically
+        self.employee.choices = get_employees()
+
 class IssueItem(FlaskForm):
     employee = SelectField("Recipient", validators=[DataRequired()], choices=all_employees)
     item = SelectField("Item", validators=[DataRequired()], choices=all_products)
@@ -149,18 +163,31 @@ class IssueItem(FlaskForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.item.choices = get_products()  # Load choices dynamically
+        self.employee.choices = get_employees()
 
 def get_products():
     """Load products from JSON file dynamically."""
     # Load products from JSON file dynamically
     with open('templates/products.json', 'r') as json_file:
-        products = json.load(json_file)
+        product_list = json.load(json_file)
 
     # Sort products alphabetically by Product name
-    sorted_products = sorted(products, key=lambda x: x['Product'].lower())
+    sorted_products = sorted(product_list, key=lambda x: x['Product'].lower())
 
     # Format choices as (ID, "Product - (Quantity)")
     return [(entry["ID"], f"{entry['Product']}  ( {entry['Quantity']} )") for entry in sorted_products]
+
+def get_employees():
+    """Load products from JSON file dynamically."""
+    # Load products from JSON file dynamically
+    with open('templates/employee.json', 'r') as json_file:
+        employees_list = json.load(json_file)
+
+    # Sort names alphabetically by Name
+    sorted_employees = sorted(employees_list, key=lambda x: x['Name'].lower())
+
+    # Format choices as ("Name")
+    return [(entry["ID"], f"{entry['Name']}") for entry in sorted_employees]
 
 class AddExistingItem(FlaskForm):
     item = SelectField("Item", validators=[DataRequired()], choices=all_products)

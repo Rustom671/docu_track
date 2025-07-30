@@ -1,9 +1,13 @@
-from flask import render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import current_user
 from forms import  AddExistingItem
 from flask_wtf.csrf import generate_csrf
 from flask import request
+from datetime import date, datetime
 import json
+from models import db, AddExistingItems
+
+
 
  #Load items from JSON
 def load_json():
@@ -24,6 +28,7 @@ def get_products():
 def addexistingitem():
     csrf_token = generate_csrf()
     form = AddExistingItem()
+    time_note = datetime.now()
 
     if request.method == 'POST' and form.validate_on_submit():
         # Get values from the form using form's attribute data
@@ -36,13 +41,30 @@ def addexistingitem():
         # Find the item in the JSON data
         item_found = False
         for item in items:
-            if item['ID'] == item_name:  # Access the Product key from the JSON
-                # Convert the Quantity field to int, add the new quantity, then convert it back to string
-                item['Quantity'] = str(int(item['Quantity']) + quantity_to_add)  # Modify the Quantity
-                item_found = True
-                save_json(items)  # Save JSON immediately after modifying the item
-                flash("Item quantity updated successfully.")
-                return redirect(url_for("user_dashboard"))
+            if str(item['ID']) == str(item_name):   # Ensure item_name is an integer
+                try:
+                    existing_item = AddExistingItems(
+                        added_by=current_user.id,
+                        item_id=item['ID'],
+                        emp_id=current_user.id,
+                        q_added=quantity_to_add,
+                        date_issued=time_note
+                    )
+                    db.session.add(existing_item)
+                    db.session.commit()  # Commit the transaction to save to DB
+
+                    # Successfully added to DB, now update the quantity in JSON
+                    item['Quantity'] = str(int(item['Quantity']) + quantity_to_add)
+                    save_json(items)  # Save the updated JSON file
+
+                    item_found = True
+                    flash("Item quantity updated successfully.")
+                    return redirect(url_for("user_dashboard"))
+
+                except Exception as e:
+                    db.session.rollback()  # Rollback the transaction if there's an error
+                    flash(f"Failed to save to database: {str(e)}", "error")
+                    return redirect(url_for("user_dashboard"))
 
         if not item_found:
             flash(f"This item does not exist: {item_name}", "error")

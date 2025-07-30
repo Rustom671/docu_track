@@ -1,9 +1,11 @@
-from flask import render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import current_user
-from forms import AddNewItem, AddExistingItem
+from forms import  AddNewItem
 from flask_wtf.csrf import generate_csrf
 from flask import request
+from datetime import date, datetime
 import json
+from models import db, AddItems
 
 # Load items from JSON
 def load_json():
@@ -24,7 +26,7 @@ def get_products():
 def addnewitem():
     csrf_token = generate_csrf()
     form = AddNewItem()
-    form_existing = AddExistingItem()  # Reload the form to get updated choices
+    time_note = datetime.now()
 
     if request.method == 'POST' and form.validate_on_submit():
         # Get values from the form using form's attribute data
@@ -50,17 +52,32 @@ def addnewitem():
             "Product": item_name,
             "Quantity": str(quantity_to_add)
         }
-        items.append(new_item)
 
-        # Save the updated items back to the JSON file
-        save_json(items)  # Use the save_json function to update the file
+        try:
+            add_item = AddItems(
+                added_by=current_user.id,
+                item_id=new_id,
+                emp_id=current_user.id,
+                q_added=quantity_to_add,
+                date_issued=time_note
+            )
+            db.session.add(add_item)
+            db.session.commit()  # Commit the transaction to save to DB
+            items.append(new_item)
 
-        flash(f"New item '{item_name}' added successfully with quantity {quantity_to_add}.", "success")
+            # Save the updated items back to the JSON file
+            save_json(items)  # Use the save_json function to update the file
 
-        # After adding the new item, reload the product list
+            item_found = True
+            flash(f"New item '{item_name}' added successfully with quantity {quantity_to_add}.", "success")
+            return redirect(url_for("user_dashboard"))
+             # Ensure `form_existing` has updated choices
+            # form_existing.item.choices = get_products()
 
-        return redirect(url_for("user_dashboard"))
+        except Exception as e:
+            db.session.rollback()  # Rollback the transaction if there's an error
+            flash(f"Failed to save to database: {str(e)}", "error")
+            return redirect(url_for("user_dashboard"))
 
-    # Ensure `form_existing` has updated choices
-    form_existing.item.choices = get_products()
-    return render_template("user_dashboard.html", current_user=current_user, csrf_token=csrf_token, form2=form, form1=form_existing)
+
+    return render_template("user_dashboard.html", current_user=current_user, csrf_token=csrf_token, form2=form)

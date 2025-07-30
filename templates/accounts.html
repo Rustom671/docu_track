@@ -7,16 +7,35 @@
 
 <div class="container-fluid">
     <div class="row flex-nowrap">
-        <div class="col-xl-2 col-lg-2 col-md-3 col-2 bg-light shadow min-vh-100 position-fixed d-inline-block">
+        <div class="col-xl-2 col-lg-2 col-md-3 col-2 bg-dark shadow min-vh-100 position-fixed d-inline-block">
             {% include "sidebar.html" %}
         </div>
-        <div class="col-xl-10 col-lg-10 col-md-9 col-10 offset-xl-2 offset-lg-2 offset-md-3 offset-2">
+        <div class="col-xl-10 col-lg-10 col-md-9 col-10 offset-xl-2 offset-lg-2 offset-md-3 offset-2 mt-3">
             <div class="py-3 px-lg-3 px-md-2 px-sm-3 px-xs-3" >
                 <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3">
                     <div class="col">
-                        <div class="card-header navbar-brand text-center" style="color: #400c06">
-                            <h5><strong>Hi {{current_user.user_fname}}! Here is a list of accounts in CBAO-DTMS.</strong></h5>
+                        <div class="card-header navbar-brand text-center" style="color: #212529">
+                            <h5><strong>Hi {{current_user.user_fname}}!</strong></h5>
                         </div>
+<!--                                    <div class="d-md-flex justify-content-between">-->
+<!--                                      <div class="col-lg-6 col-md-12 col-sm-12 " style="justify-content: center;">-->
+<!--                                        <h5 class="text-center p-3"><strong>Utilization Rate</strong></h5>-->
+<!--                                        <div id="piechart"></div>-->
+<!--                                      </div>-->
+
+<!--                                      <div class="col-lg-6 col-md-12 col-sm-12 d-none d-lg-inline text-center ">-->
+
+<!--                                        <h5 class="p-3"><strong>Reminders</strong></h5>-->
+<!--                                        <p class="p-5">Please be mindful that any information on this website is confidential and should be treated with utmost care. Avoid sharing sensitive details or personal information in public forums. Privacy and security are important to us. <br>Thank you for your cooperation.</p>-->
+<!--                                        <p id="pending" style="display: none">{{ pending }}</p>-->
+<!--                                        <p id="archived" style="display: none">{{ archived }}</p>-->
+<!--                                        <p id="dismissed" style="display: none">{{ dismissed }}</p>-->
+<!--                                        <p id="for_demolition" style="display: none">{{ for_demolition }}</p>-->
+<!--                                        <p id="demolished" style="display: none">{{ demolished }}</p>-->
+<!--                                        <p id="deferred" style="display: none">{{ deferred }}</p>-->
+<!--                                        <p id="for_resolution" style="display: none">{{ for_resolution }}</p>-->
+<!--                                      </div>-->
+<!--                                    </div>-->
                     </div>
                 </div>
                 <div class="row px-sm-2 px-0 bg-light shadow p-3 rounded mb-3">

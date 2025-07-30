@@ -1,12 +1,14 @@
-from flask import render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import current_user
 from forms import  IssueItem
 from flask_wtf.csrf import generate_csrf
 from flask import request
+from datetime import date, datetime
 import json
+from models import db, IssuedItems
 
- #Load items from JSON
-def load_json():
+#Load items from JSON
+def load_json_item():
     with open('templates/products.json', 'r') as file:
         return json.load(file)
 
@@ -24,36 +26,55 @@ def get_products():
 def issueitem():
     csrf_token = generate_csrf()
     form = IssueItem()
+    time_note = datetime.now()
 
     if request.method == 'POST' and form.validate_on_submit():
-        # Get values from the form using form's attribute data
         item_name = form.item.data
-        quantity_to_subtract = int(form.quantity.data)  # Convert quantity to int
+        emp_name = form.employee.data
+        quantity_to_subtract = int(form.quantity.data)
 
-        # Load the existing items from the JSON file
-        items = load_json()
+        items = load_json_item()
+        try:
+            item_found = False
+            for item in items:
+                if item['ID'] == item_name:
+                    current_stock = int(item['Quantity'])
 
-        # Find the item in the JSON data
-        item_found = False
-        for item in items:
-            if item['ID'] == item_name:  # Access the Product key from the JSON
-                current_stock = int(item['Quantity'])  # Convert stock to integer
+                    if quantity_to_subtract > current_stock:
+                        flash(f"Error: Requested quantity ({quantity_to_subtract}) exceeds available stock ({current_stock}).", "danger")
+                        return redirect(url_for("user_dashboard"))
 
-                if quantity_to_subtract > current_stock:
-                    flash(
-                        f"Error: Requested quantity ({quantity_to_subtract}) exceeds available stock ({current_stock}).",
-                        "danger")
+                    # First, create the issued item record (but don't commit yet)
+                    issued_item = IssuedItems(
+                        issued_by=current_user.id,
+                        item_id=item['ID'],  # No need to access .id since 'ID' is already an identifier
+                        emp_id=emp_name,
+                        q_issued=quantity_to_subtract,
+                        date_issued=time_note
+                    )
+                    db.session.add(issued_item)
+
+                    # Flush to check for DB errors before committing
+                    db.session.flush()
+
+                    # If successful, then update the JSON file
+                    item['Quantity'] = str(current_stock - quantity_to_subtract)
+
+                    # Now commit the database transaction
+                    db.session.commit()
+
+                    # Save JSON only after successful DB commit
+                    save_json(items)
+
+                    flash("Item issued successfully.", "success")
                     return redirect(url_for("user_dashboard"))
 
-                # If valid, subtract the quantity
-                item['Quantity'] = str(current_stock - quantity_to_subtract)
-                save_json(items)  # Save JSON immediately after modifying the item
-
-                flash("Item issued successfully.", "success")
+            if not item_found:
+                flash(f"This item does not exist: {item_name}", "error")
                 return redirect(url_for("user_dashboard"))
 
-        if not item_found:
-            flash(f"This item does not exist: {item_name}", "error")
-            return redirect(url_for("user_dashboard"))
+        except Exception as e:
+            db.session.rollback()  # Rollback DB changes if any error occurs
+            flash(f"An error occurred: {str(e)}", "danger")
 
-    return render_template("user_dashboard.html", current_user=current_user, csrf_token=csrf_token, form=form)
+    return redirect(url_for("user_dashboard"))
